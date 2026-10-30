@@ -1,0 +1,70 @@
+<!doctype>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08243f">
+<title>电力系统继电保护原理 · 虚拟仿真实验</title>
+<style>
+:root{--navy:#071d35;--navy2:#0b3658;--blue:#1268b3;--cyan:#18a9c7;--ink:#142a40;--muted:#5b7085;--line:#dce6ef;--paper:#fff;--bg:#f2f6fa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.7}
+a{text-decoration:none}.topbar{height:64px;background:rgba(5,24,44,.97);color:#fff;border-bottom:1px solid rgba(107,211,235,.22)}
+.topbar-inner{max-width:1180px;height:100%;margin:auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:.5px}.brand-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(108,218,239,.5);background:rgba(26,169,199,.12);border-radius:8px;color:#6cdeef}
+.brand small{display:block;font-size:10px;font-weight:400;letter-spacing:1.8px;color:#8eb1c9;line-height:1.2}.course-tag{font-size:12px;color:#b5ccdc;border:1px solid rgba(181,204,220,.25);padding:3px 10px;border-radius:20px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(118deg,var(--navy) 0%,#0a2c4b 54%,#0c4968 100%);color:#fff}
+.hero:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(82,175,203,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(82,175,203,.07) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(90deg,transparent,#000)}
+.hero-inner{position:relative;max-width:1180px;margin:auto;padding:48px 24px 44px;display:grid;grid-template-columns:1.25fr .75fr;align-items:center;gap:42px}
+.grid-backdrop{position:absolute;inset:0;width:100%;height:100%;opacity:.15;pointer-events:none}
+.eyebrow{font-size:11px;letter-spacing:2.2px;color:#68d5e9;margin-bottom:10px}.hero h1{font-size:32px;line-height:1.35;margin:0 0 12px;letter-spacing:1px;font-weight:600}.hero h1 span{color:#70d7e8}.hero p{max-width:650px;margin:0;color:#bfd3e1;font-size:15px}
+.stats{display:flex;gap:0;margin-top:26px}.stat{padding:0 28px;border-left:1px solid rgba(156,202,222,.25)}.stat:first-child{padding-left:0;border:0}.stat b{display:block;font-size:25px;line-height:1.2;color:#fff}.stat span{font-size:12px;color:#95b7cb}
+.hero-diagram{width:100%;height:auto;filter:drop-shadow(0 12px 30px rgba(0,0,0,.2))}
+.main{max-width:1180px;margin:0 auto;padding:34px 24px 44px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:18px}.section-head h2{font-size:22px;margin:0;font-weight:600}.section-head p{margin:0;color:var(--muted);font-size:13px}.section-index{color:var(--blue);font-size:11px;letter-spacing:1.6px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{position:relative;display:grid;grid-template-columns:58px 1fr;gap:16px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:21px 22px;color:inherit;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--cyan),var(--blue));opacity:0;transition:opacity .18s}.card:hover{transform:translateY(-2px);border-color:#9cc8df;box-shadow:0 10px 26px rgba(21,68,101,.1)}.card:hover:before{opacity:1}
+.module-icon{width:56px;height:56px;border-radius:11px;background:#eaf5fb;color:var(--blue);display:grid;place-items:center;border:1px solid #d4eaf5}.module-icon svg{width:34px;height:34px}.card-top{display:flex;align-items:center;gap:9px;margin-bottom:5px}.module-no{font-size:11px;letter-spacing:1px;color:var(--blue);font-weight:600}.module-type{font-size:11px;color:#54738a;background:#edf3f7;border-radius:4px;padding:0 6px}.card h3{font-size:18px;margin:0 0 6px;line-height:1.45;font-weight:600}.card p{margin:0;color:var(--muted);font-size:13px;min-height:44px}.features{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.features span{font-size:11px;color:#315e7b;background:#f0f6fa;border:1px solid #e1edf4;padding:1px 7px;border-radius:4px}.enter{position:absolute;right:18px;bottom:16px;color:var(--blue);font-size:12px;opacity:0;transform:translateX(-4px);transition:.18s}.card:hover .enter{opacity:1;transform:none}
+.teach-note{margin-top:22px;padding:15px 18px;display:flex;gap:12px;align-items:flex-start;background:#eaf4f8;border:1px solid #d4e7ef;border-radius:10px;color:#36576d;font-size:13px}.teach-note b{color:#0c5d87;white-space:nowrap}.foot{border-top:1px solid var(--line);padding:18px 24px;text-align:center;color:#75889a;font-size:12px;background:#fff}
+@media(max-width:800px){.hero-inner{grid-template-columns:1fr;padding:36px 22px}.hero-diagram{display:none}.hero h1{font-size:27px}.grid{grid-template-columns:1fr}.course-tag{display:none}.section-head p{display:none}}
+@media(max-width:520px){.topbar-inner{padding:0 16px}.brand{font-size:13px}.hero-inner{padding:30px 18px}.hero h1{font-size:24px}.hero p{font-size:13px}.stat{padding:0 16px}.stat b{font-size:21px}.main{padding:26px 14px}.card{grid-template-columns:46px 1fr;padding:17px 15px;gap:12px}.module-icon{width:44px;height:44px}.module-icon svg{width:28px;height:28px}.card h3{font-size:16px}.enter{display:none}.teach-note{display:block}.teach-note b{display:block;margin-bottom:3px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner">
+  <div class="brand"><span class="brand-mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13.2 2 5.8 13h5.6L10.8 22l7.4-11h-5.6L13.2 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><span>电力系统继电保护原理<small>RELAY PROTECTION VIRTUAL LAB</small></span></div>
+  <span class="course-tag">本科课程 · 虚拟仿真实验</span>
+</div></header>
+<section class="hero">
+  <svg class="grid-backdrop" viewBox="0 0 1440 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#8ad8e8" stroke-width="2">
+      <path d="M0 105Q180 154 360 105T720 105T1080 105T1440 105M0 135Q180 184 360 135T720 135T1080 135T1440 135"/>
+      <path d="M170 88 126 362h88L170 88Zm0 0-62 76h124L170 88Zm-42 112h84m-98 52h112m-124 54h136M126 362l44-274 44 274M112 164l58 44 58-44M108 252l62-52 62 52M104 306l66-54 66 54"/>
+      <path d="M1235 62 1192 350h86l-43-288Zm0 0-62 76h124l-62-76Zm-40 116h80m-94 52h108m-118 54h128M1192 350l43-288 43 288M1176 138l59 44 59-44M1174 230l61-52 61 52M1171 284l64-54 64 54"/>
+    </g>
+  </svg>
+  <div class="hero-inner">
+  <div><div class="eyebrow">POWER SYSTEM PROTECTION · INTERACTIVE LEARNING</div><h1>让保护原理<span>可见、可算、可操作</span></h1><p>从一次电网故障到二次保护动作，将整定计算、特性分析、录波回放与断路器时序融入同一个交互实验。</p><div class="stats"><div class="stat"><b>7</b><span>核心实验模块</span></div><div class="stat"><b>25</b><span>典型教学案例</span></div><div class="stat"><b>全流程</b><span>故障—判据—动作</span></div></div></div>
+  <svg class="hero-diagram" viewBox="0 0 390 240" role="img" aria-label="电源、母线、输电线路、变压器和继电保护组成的电网示意图">
+    <defs><marker id="home-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#62d4e8"/></marker></defs>
+    <g fill="none" stroke="#62d4e8" stroke-width="2"><path d="M35 60v112M25 172h20M29 179h12M32 186h6"/><circle cx="35" cy="42" r="24"/><path d="M23 42c8-14 16 14 24 0M35 66v24H94M94 76v92M75 90h38M75 158h38M113 104h80M193 90v92M180 104h26M180 158h26"/><circle cx="232" cy="117" r="25"/><circle cx="232" cy="143" r="25"/><path d="M257 130h76M333 94v72M320 104h26M320 156h26"/></g>
+    <g fill="#d7f7fc" font-family="Microsoft YaHei" font-size="12"><text x="12" y="215">电源</text><text x="74" y="215">母线</text><text x="136" y="91">输电线路</text><text x="209" y="194">变压器</text><text x="310" y="194">负荷</text></g>
+    <g><rect x="127" y="118" width="51" height="42" rx="6" fill="#0d4968" stroke="#77e2ef"/><text x="152" y="136" text-anchor="middle" fill="#77e2ef" font-size="11">RELAY</text><text x="152" y="151" text-anchor="middle" fill="#fff" font-size="12">保护装置</text><path d="M152 118V99" stroke="#f8c864" stroke-width="2" marker-end="url(#home-arrow)"/></g>
+    <circle cx="148" cy="104" r="5" fill="#f8c864"/><path d="M140 82l8 10 8-10 8 10" fill="none" stroke="#f8c864" stroke-width="2"/>
+  </svg>
+</div></section>
+<main class="main">
+  <div class="section-head"><div><div class="section-index">EXPERIMENT DIRECTORY</div><h2>实验项目</h2></div><p>选择模块进入 · 可切换案例、调节参数并播放动作过程</p></div>
+  <div class="grid">
+    <a class="card" href="current.html"><span class="module-icon"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M3 21h8l3-11 5 23 4-17 3 5h11" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M4 34h32" stroke="currentColor" stroke-width="2"/></svg></span><div><div class="card-top"><span class="module-no">01</span><span class="module-type">电网电流保护</span></div><h3>三段式电流保护交互仿真</h3><p>完整参数与整定计算对照，故障录波展示启动、延时与跳闸全过程。</p><div class="features"><span>整定计算</span><span>阶梯时限</span><span>故障录波</span></div></div><span class="enter">进入实验 →</span></a>
+    <a class="card" href="distance.html"><span class="module-icon"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M7 34V6M7 34h29M7 27l7-7 6 3 13-14" stroke="currentColor" stroke-width="1.7"/><circle cx="22" cy="20" r="10" stroke="currentColor" stroke-width="2"/><circle cx="22" cy="20" r="2" fill="currentColor"/></svg></span><div><div class="card-top"><span class="module-no">02</span><span class="module-type">电网距离保护</span></div><h3>距离保护方向阻抗特性</h3><p>一次接线与 R-X 平面联动，观察测量阻抗落入动作圆的过程。</p><div class="features"><span>阻抗圆</span><span>二次折算</span><span>过渡电阻</span></div></div><span class="enter">进入实验 →</span></a>
+    <a class="card" href="diff.html"><span class="module-icon"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="17" cy="15" r="10" stroke="currentColor" stroke-width="2"/><circle cx="23" cy="25" r="10" stroke="currentColor" stroke-width="2"/><path d="M3 20h6m22 0h6M20 3v4m0 26v4" stroke="currentColor" stroke-width="2"/></svg></span><div><div class="card-top"><span class="module-no">03</span><span class="module-type">变压器保护</span></div><h3>变压器纵差比率制动特性</h3><p>两侧电流与差动保护区联动，演绎内部故障和 CT 饱和防误动。</p><div class="features"><span>比率制动</span><span>差流计算</span><span>三级判据</span></div></div><span class="enter">进入实验 →</span></a>
+    <a class="card" href="inrush.html"><span class="module-icon"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M3 24h5l3-14 5 24 5-29 5 27 4-16 3 8h4" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M4 36h32" stroke="currentColor" stroke-width="1.5"/></svg></span><div><div class="card-top"><span class="module-no">04</span><span class="module-type">变压器励磁涌流</span></div><h3>励磁涌流与二次谐波制动</h3><p>空载合闸录波与 DFT 频谱同步呈现，对比涌流和内部短路。</p><div class="features"><span>合闸相角</span><span>谐波频谱</span><span>制动判据</span></div></div><span class="enter">进入实验 →</span></a>
+    <a class="card" href="direction.html"><span class="module-icon"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="15" stroke="currentColor" stroke-width="1.7"/><path d="M20 20 31 12M20 20 9 15M20 5v30M5 20h30" stroke="currentColor" stroke-width="2"/><path d="m27 11 5 1-1 5" stroke="currentColor" stroke-width="2"/></svg></span><div><div class="card-top"><span class="module-no">05</span><span class="module-type">方向电流保护</span></div><h3>功率方向元件与 90° 接线</h3><p>电压、电流相量与动作区联动，辨析正反向故障及电压死区。</p><div class="features"><span>相量分析</span><span>功率方向</span><span>90° 接线</span></div></div><span class="enter">进入实验 →</span></a>
+    <a class="card" href="aar.html"><span class="module-icon"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M31 13a13 13 0 1 0 2 14M31 5v8h-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 25v-9m14 9V9M9 16h8m6-7h8" stroke="currentColor" stroke-width="2"/></svg></span><div><div class="card-top"><span class="module-no">06</span><span class="module-type">自动重合闸</span></div><h3>AAR 与前 / 后加速配合</h3><p>断路器分合状态与时序游标同步，比较瞬时性和永久性故障。</p><div class="features"><span>重合闸时序</span><span>前加速</span><span>后加速</span></div></div><span class="enter">进入实验 →</span></a>
+    <a class="card" href="fourier.html"><span class="module-icon"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="9" y="9" width="22" height="22" rx="3" stroke="currentColor" stroke-width="2"/><path d="M14 21h3l2-6 3 11 2-5h3M4 14h5m-5 6h5m-5 6h5m22-12h5m-5 6h5m-5 6h5M14 4v5m6-5v5m6-5v5M14 31v5m6-5v5m6-5v5" stroke="currentColor" stroke-width="1.6"/></svg></span><div><div class="card-top"><span class="module-no">07</span><span class="module-type">微机保护算法</span></div><h3>傅氏算法与滑动数据窗</h3><p>从 CT 采样到正交投影，滑窗动画揭示滤波能力与响应速度。</p><div class="features"><span>采样信号链</span><span>滑动数据窗</span><span>频域分析</span></div></div><span class="enter">进入实验 →</span></a>
+  </div>
+  <div class="teach-note"><b>建议学习路径</b><span>先根据“给定参数”手算整定值或理论结果，再选择案例进行仿真，最后结合网络图、录波和动作时序解释现象。</span></div>
+</main>
+<footer class="foot">电力系统继电保护原理 · 本科教学虚拟仿真　|　建议使用 Chrome / Edge 浏览器</footer>
+</body>
+</html>

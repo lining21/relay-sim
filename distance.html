@@ -1,0 +1,378 @@
+﻿<!doctype>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08243f">
+<title>距离保护方向阻抗特性 · 电力系统继电保护原理虚拟仿真</title>
+<style>
+:root{--background:#f2f6fa;--foreground:#172b3f;--card:#fff;--card-foreground:#172b3f;--muted:#edf3f7;--muted-foreground:#587086;--primary:#1268b3;--primary-foreground:#fff;--border:#d9e4ed;--red:#c43b35;--green:#168566;--orange:#d37916;--accent:#e8f3fa;--accent-foreground:#172b3f;--viz-series-1:#1268b3;--viz-series-2:#e18a23;--viz-series-3:#168566;--viz-series-4:#8555b5;--viz-series-5:#d44b45;--viz-series-6:#168a9e}
+*{box-sizing:border-box}
+body{margin:0;padding:0 16px 42px;background:var(--background);color:var(--foreground);font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.65}
+.lab-header{margin:0 -16px;background:linear-gradient(112deg,#071d35,#0a3556 65%,#0c526c);color:#fff;border-bottom:2px solid #20a9c4;box-shadow:0 4px 16px rgba(8,38,62,.14)}
+.lab-header-inner{max-width:1080px;margin:auto;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lab-brand{display:flex;align-items:center;gap:11px}.lab-mark{width:37px;height:37px;display:grid;place-items:center;border:1px solid rgba(105,216,235,.45);border-radius:8px;color:#70d8e9;background:rgba(40,181,205,.09)}
+.lab-brand b{display:block;font-size:15px;letter-spacing:.5px;font-weight:600}.lab-brand small{display:block;color:#92b6cb;font-size:9px;letter-spacing:1.6px;line-height:1.4}.lab-return{color:#d4e8f3;font-size:12px;text-decoration:none;border:1px solid rgba(180,215,230,.3);border-radius:6px;padding:5px 11px;white-space:nowrap;transition:.15s}.lab-return:hover{background:rgba(255,255,255,.1);border-color:#71d2e4}
+.lab-subhead{max-width:1080px;margin:18px auto 0;padding:0 4px;display:flex;align-items:center;gap:9px;color:#58738a;font-size:12px}.lab-subhead:before{content:"";width:18px;height:2px;background:#18a9c7}.lab-subhead span{color:#1268b3;letter-spacing:.6px}
+.wrap{max-width:1080px;margin:8px auto 0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:23px 28px 27px;box-shadow:0 7px 24px rgba(21,63,92,.06);position:relative;overflow:hidden}
+.wrap:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#1268b3,#18a9c7 45%,transparent 90%)}
+h3{margin:3px 0 14px;font-size:20px;font-weight:600;line-height:1.45}.wrap>h3{padding-bottom:12px;border-bottom:1px solid var(--border);color:#103c60}
+.text-small{font-size:12px}.text-muted{color:var(--muted-foreground)}.tabular-nums{font-variant-numeric:tabular-nums}.text-end{text-align:right}.text-nowrap{white-space:nowrap}
+.table{width:100%;border-collapse:collapse;margin:5px 0 9px}.table-sm td,.table-sm th{padding:6px 9px;border-bottom:1px solid var(--border);text-align:left}.table-sm th{background:#f1f6fa;color:#35566e;font-weight:500}.table-sm tr:last-child td{border-bottom:0}.table-sm th.text-end,.table-sm td.text-end{text-align:right}
+.form-range{width:100%;accent-color:var(--primary);cursor:pointer}.form-select{padding:6px 30px 6px 10px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);font-family:inherit;font-size:14px;outline:none}.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,104,179,.12)}
+.form-check{display:inline-flex;align-items:center;gap:5px;cursor:pointer}.form-check-input{accent-color:var(--primary);width:15px;height:15px;margin:0}
+.btn{padding:7px 17px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);cursor:pointer;font-family:inherit;font-size:14px;transition:background .15s,border-color .15s,box-shadow .15s}.btn:hover{background:#edf5fa;border-color:#7ba9c5}.btn-primary{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary);box-shadow:0 2px 5px rgba(18,104,179,.16)}.btn-primary:hover{background:#0d599c;border-color:#0d599c}.btn:focus-visible{outline:3px solid rgba(24,169,199,.28);outline-offset:2px}.btn-primary:disabled{opacity:.55;cursor:default}
+input[type="number"],input[type="text"]{border:1px solid #bdcedb;border-radius:5px;padding:5px 8px;color:var(--foreground);font-family:inherit}input[type="number"]:focus,input[type="text"]:focus{outline:2px solid rgba(18,104,179,.15);border-color:var(--primary)}
+@media(max-width:640px){body{padding:0 8px 26px}.lab-header{margin:0 -8px}.lab-header-inner{padding:12px 14px}.lab-brand b{font-size:13px}.lab-brand small{font-size:8px;letter-spacing:1px}.lab-mark{width:32px;height:32px}.lab-return{padding:4px 8px}.wrap{padding:19px 15px 22px}.wrap>h3{font-size:18px}.lab-subhead{padding:0 7px}.table-sm td,.table-sm th{padding:5px}}
+</style>
+</head>
+<body>
+<header class="lab-header"><div class="lab-header-inner">
+  <div class="lab-brand"><span class="lab-mark"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13.2 2 5.8 13h5.6L10.8 22l7.4-11h-5.6L13.2 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><span><b>电力系统继电保护原理 · 虚拟仿真实验</b><small>RELAY PROTECTION VIRTUAL LAB</small></span></div>
+  <a class="lab-return" href="index.html">← 返回实验目录</a>
+</div></header>
+<div class="lab-subhead"><span>模块 02 · 电网距离保护</span> / 交互实验台</div>
+<main class="wrap"><div id="dps-sim">
+<style>
+#dps-sim .dps-controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin:6px 0 12px}
+#dps-sim .dps-field{display:flex;flex-direction:column;gap:4px;flex:1 1 150px;min-width:140px}
+#dps-sim .dps-field>span{font-weight:500}
+#dps-sim .dps-grid{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+#dps-sim .dps-chart{flex:3 1 420px;min-width:300px}
+#dps-sim .dps-result{flex:2 1 260px;min-width:240px}
+#dps-sim .dps-plabel{font-weight:500;margin:4px 0 6px}
+#dps-sim .dps-leg{display:flex;flex-wrap:wrap;gap:4px 16px;margin:4px 0}
+#dps-sim .dps-sw{display:inline-block;width:16px;border-top:2px solid var(--viz-series-3);margin-right:6px;vertical-align:middle}
+#dps-sim .dps-sw.c4{border-color:var(--viz-series-4)}
+#dps-sim .dps-sw.c5{border-color:var(--viz-series-5)}
+#dps-sim .dps-conc{margin-top:10px;font-weight:500}
+#dps-sim .dps-metrics{margin-top:8px;display:flex;flex-direction:column;gap:2px}
+#dps-sim .dps-calc{margin-top:8px;display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--border);padding-top:8px}
+#dps-sim .dps-params{background:var(--muted);border-radius:8px;padding:8px 12px;margin:6px 0 12px}
+#dps-sim .dps-tl{display:none;align-items:center;gap:10px;margin-top:10px}
+#dps-sim .dps-track{flex:1;height:8px;background:var(--muted);border-radius:4px;overflow:hidden}
+#dps-sim #dps-tl-fill{height:100%;width:0;background:var(--viz-series-1)}
+#dps-sim svg{display:block;width:100%;height:auto}
+</style>
+
+<h3>距离保护方向阻抗特性 · 测量阻抗与动作区</h3>
+
+<div class="dps-params text-small"><b>给定参数（供整定计算）：</b>110 kV 线路，单位阻抗 z1 = 0.4∠75° Ω/km；本线路 L1 = 100 km（保护1装于母线A侧），下一级线路 L2 = 60 km，再下一级线路 L3 = 60 km。教学算例整定：Ⅰ段 Zset1 = 0.85ZL1；Ⅱ段 Zset2 = ZL1 + 0.5ZL2；Ⅲ段为演示远后备范围取 Zset3 = ZL1 + ZL2 + 0.5ZL3（对应线路方向 190 km；实际工程还须按躲过最小负荷阻抗并校验灵敏度）。<br><b>已知动作时限：</b>保护2的Ⅰ段 tⅠ,2 = 0.05 s、Ⅱ段 tⅡ,2 = 0.55 s、Ⅲ段 tⅢ,2 = 1.5 s，时限级差 Δt = 0.5 s，因此保护1取 tⅠ,1 = 0.05 s、tⅡ,1 = tⅠ,2 + Δt = 0.55 s、tⅢ,1 = tⅢ,2 + Δt = 2.0 s。测量阻抗 Zm = Zk + Rf（过渡电阻按纯电阻计）；互感器变比 PT = 1100、CT = 120，二次测量阻抗 = 一次值 × CT/PT。动画简化为保护出口与断路器分闸同步。</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 10px">
+  <span style="font-weight:500">典型案例：</span>
+  <select class="form-select" id="dps-case">
+    <option value="">手动探索（自行调节参数）</option>
+    <option value="zone1">案例1：Ⅰ段正方向金属性短路</option>
+    <option value="arc">案例2：过渡电阻使Ⅰ段拒动、Ⅱ段后备</option>
+    <option value="remote">案例3：下一级线路远端故障，Ⅲ段远后备</option>
+    <option value="reverse">案例4：反向故障不动作</option>
+  </select>
+  <span class="text-small" id="dps-case-note" style="flex:1 1 260px"></span>
+</div>
+
+<div class="dps-controls">
+  <label class="dps-field"><span>故障距离：<span class="tabular-nums" id="dps-lf-v">30 km</span></span>
+    <input type="range" class="form-range" id="dps-lf" min="0" max="160" step="1" value="30"></label>
+  <label class="dps-field"><span>过渡电阻 Rf：<span class="tabular-nums" id="dps-rf-v">0 Ω</span></span>
+    <input type="range" class="form-range" id="dps-rf" min="0" max="25" step="0.5" value="0"></label>
+  <label class="dps-field"><span>故障方向</span>
+    <select class="form-select" id="dps-dir">
+      <option value="1" selected>正向（线路出口→末端）</option>
+      <option value="-1">反向（母线背侧）</option>
+    </select></label>
+  <label class="dps-field"><span>下一级保护2状态（仅 L2 故障）</span>
+    <select class="form-select" id="dps-down">
+      <option value="normal" selected>正常：保护2优先跳闸</option>
+      <option value="fail">拒动：保护1远后备跳闸</option>
+    </select></label>
+  <button type="button" class="btn btn-primary" id="dps-run">模拟故障</button>
+</div>
+
+<div class="dps-plabel">一次系统接线、故障点与三段线路方向保护范围</div>
+<div id="dps-diagram" role="img" aria-label="三级线路网络及距离保护三段保护范围"></div>
+<div class="dps-grid">
+  <div class="dps-chart">
+    <div class="dps-plabel" style="margin-top:10px">R-X 阻抗平面（一次值，Ω；横纵刻度不同，数学圆显示为椭圆）</div>
+    <div id="dps-plane" role="img" aria-label="阻抗平面上的方向阻抗动作圆与测量阻抗点"></div>
+    <div class="dps-leg text-small">
+      <span><span class="dps-sw"></span>Ⅰ段动作圆（0.05 s）</span>
+      <span><span class="dps-sw c4"></span>Ⅱ段动作圆（0.55 s）</span>
+      <span><span class="dps-sw c5"></span>Ⅲ段动作圆（2.0 s）</span>
+    </div>
+  </div>
+  <div class="dps-result">
+    <div class="dps-plabel">动作分析</div>
+    <div>测量阻抗 Zm = <span class="tabular-nums" id="dps-zm" style="font-weight:500">—</span> Ω</div>
+    <div class="text-small" style="color:var(--muted-foreground)" id="dps-zm-cap">—</div>
+    <table class="table table-sm" style="margin-top:6px">
+      <thead><tr><th>保护段</th><th class="text-end text-nowrap">整定阻抗</th><th class="text-end text-nowrap">时限</th><th class="text-nowrap">状态</th></tr></thead>
+      <tbody>
+        <tr><td>Ⅰ段 方向阻抗</td><td class="text-end tabular-nums text-nowrap" id="dps-v1">—</td><td class="text-end tabular-nums text-nowrap">0.05 s</td><td class="text-nowrap" id="dps-st1">—</td></tr>
+        <tr><td>Ⅱ段 方向阻抗</td><td class="text-end tabular-nums text-nowrap" id="dps-v2">—</td><td class="text-end tabular-nums text-nowrap">0.55 s</td><td class="text-nowrap" id="dps-st2">—</td></tr>
+        <tr><td>Ⅲ段 方向阻抗</td><td class="text-end tabular-nums text-nowrap" id="dps-v3">—</td><td class="text-end tabular-nums text-nowrap">2.0 s</td><td class="text-nowrap" id="dps-st3">—</td></tr>
+      </tbody>
+    </table>
+    <div class="dps-calc text-small" id="dps-calc"></div>
+    <div class="dps-conc" id="dps-conc" aria-live="polite">调整工况后，点击「模拟故障」观察各段启动与跳闸过程。</div>
+    <div class="dps-tl" id="dps-tl">
+      <div class="dps-track"><div id="dps-tl-fill"></div></div>
+      <span class="tabular-nums text-small" id="dps-tl-t">t = 0.00 s</span>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+(function(){
+var z1=0.4, ANG=75*Math.PI/180, L1=100, L2=60, L3=60;
+var ZL1=z1*L1, ZL2=z1*L2, ZL3=z1*L3;
+var Zset=[0.85*ZL1, ZL1+0.5*ZL2, ZL1+ZL2+0.5*ZL3];
+var TSET=[0.05,0.55,2.0];
+var COS=Math.cos(ANG), SIN=Math.sin(ANG);
+function el(id){return document.getElementById(id);}
+var ui={lf:el('dps-lf'),rf:el('dps-rf'),dir:el('dps-dir'),down:el('dps-down'),run:el('dps-run')};
+var out={lfv:el('dps-lf-v'),rfv:el('dps-rf-v'),plane:el('dps-plane'),diagram:el('dps-diagram'),zm:el('dps-zm'),cap:el('dps-zm-cap'),
+  v1:el('dps-v1'),v2:el('dps-v2'),v3:el('dps-v3'),
+  st1:el('dps-st1'),st2:el('dps-st2'),st3:el('dps-st3'),
+  calc:el('dps-calc'),conc:el('dps-conc'),tl:el('dps-tl'),tlf:el('dps-tl-fill'),tlt:el('dps-tl-t')};
+var running=false;
+
+function compute(){
+  var lf=+ui.lf.value, rf=+ui.rf.value, dir=+ui.dir.value;
+  var Zk=z1*lf;
+  var ZmR=dir*Zk*COS+rf, ZmX=dir*Zk*SIN;
+  var picked=[false,false,false], zone=0;
+  for(var i=0;i<3;i++){
+    var cx=Zset[i]/2*COS, cy=Zset[i]/2*SIN, r=Zset[i]/2;
+    var dx=ZmR-cx, dy=ZmX-cy;
+    picked[i]=Math.sqrt(dx*dx+dy*dy)<=r+1e-9;
+  }
+  for(i=0;i<3;i++){ if(picked[i]){zone=i+1;break;} }
+  var zkInZ1=false;
+  if(dir>0){
+    var cx1=Zset[0]/2*COS, cy1=Zset[0]/2*SIN, r1=Zset[0]/2;
+    var ax=Zk*COS-cx1, ay=Zk*SIN-cy1;
+    zkInZ1=Math.sqrt(ax*ax+ay*ay)<=r1;
+  }
+  var downstreamTrip=dir>0&&lf>L1&&lf<=L1+L2&&ui.down.value==='normal';
+  var downstreamT=0;
+  if(downstreamTrip){
+    var zk2=z1*(lf-L1), r2=zk2*COS+rf, x2=zk2*SIN;
+    function inside2(zset){
+      var dx=r2-zset/2*COS, dy=x2-zset/2*SIN;
+      return Math.sqrt(dx*dx+dy*dy)<=zset/2+1e-9;
+    }
+    downstreamT=inside2(0.85*ZL2)?0.05:(inside2(ZL2+0.5*ZL3)?0.55:1.5);
+  }
+  return {lf:lf,rf:rf,dir:dir,down:ui.down.value,Zk:Zk,ZmR:ZmR,ZmX:ZmX,picked:picked,zone:zone,zkInZ1:zkInZ1,
+    tripT:zone?TSET[zone-1]:0,downstreamTrip:downstreamTrip,downstreamT:downstreamT,endT:downstreamTrip?downstreamT:(zone?TSET[zone-1]:0)};
+}
+
+function renderDiagram(C,tripped,downstreamTripped){
+  var y=108;
+  function distanceX(d){
+    if(d<=L1)return 125+d/L1*210;
+    if(d<=L1+L2)return 380+(d-L1)/L2*140;
+    return 565+(d-L1-L2)/L3*140;
+  }
+  var xf=C.dir<0?70:distanceX(C.lf);
+  var blade1=tripped?'M105,'+y+' L121,92':'M105,'+y+' L125,'+y;
+  var blade2=downstreamTripped?'M360,'+y+' L376,92':'M360,'+y+' L380,'+y;
+  var qf1=tripped?'var(--red)':'var(--foreground)', qf2=downstreamTripped?'var(--red)':'var(--foreground)';
+  var s='<svg viewBox="0 0 760 190" role="img" aria-label="三级线路及距离保护范围图">';
+  var zones=[{reach:85,y:24,name:'Ⅰ段 85 km',color:'var(--viz-series-3)'},{reach:130,y:44,name:'Ⅱ段 130 km',color:'var(--viz-series-4)'},{reach:190,y:64,name:'Ⅲ段 190 km',color:'var(--viz-series-5)'}];
+  zones.forEach(function(z){
+    var xe=distanceX(z.reach);
+    s+='<text x="18" y="'+(z.y+4)+'" font-size="12" fill="'+z.color+'">'+z.name+'</text>';
+    s+='<line x1="125" y1="'+z.y+'" x2="'+xe+'" y2="'+z.y+'" stroke="'+z.color+'" stroke-width="2"/>';
+    s+='<line x1="125" y1="'+(z.y-4)+'" x2="125" y2="'+(z.y+4)+'" stroke="'+z.color+'" stroke-width="2"/>';
+    s+='<line x1="'+xe+'" y1="'+(z.y-4)+'" x2="'+xe+'" y2="'+(z.y+4)+'" stroke="'+z.color+'" stroke-width="2"/>';
+  });
+  s+='<circle cx="25" cy="'+y+'" r="14" fill="none" stroke="var(--foreground)" stroke-width="1.5"/><text x="25" y="'+(y+4)+'" text-anchor="middle" font-size="13" fill="var(--foreground)">~</text>';
+  s+='<text x="25" y="145" text-anchor="middle" font-size="12" fill="var(--foreground)">系统</text>';
+  s+='<line x1="39" y1="'+y+'" x2="80" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  [[80,'A'],[335,'B'],[520,'C']].forEach(function(bus){
+    s+='<line x1="'+bus[0]+'" y1="92" x2="'+bus[0]+'" y2="124" stroke="var(--foreground)" stroke-width="4"/>';
+    s+='<text x="'+bus[0]+'" y="86" text-anchor="middle" font-size="12" fill="var(--foreground)">母线'+bus[1]+'</text>';
+  });
+  s+='<line x1="80" y1="'+y+'" x2="105" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/><rect x="105" y="98" width="20" height="20" fill="none" stroke="'+qf1+'" stroke-width="1.5"/><path d="'+blade1+'" stroke="'+qf1+'" stroke-width="2.5" fill="none"/>';
+  s+='<text x="115" y="145" text-anchor="middle" font-size="12" fill="var(--foreground)">QF1·保护1</text>';
+  s+='<line x1="125" y1="'+y+'" x2="335" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/><text x="230" y="164" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">L1 = 100 km</text>';
+  s+='<line x1="335" y1="'+y+'" x2="360" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/><rect x="360" y="98" width="20" height="20" fill="none" stroke="'+qf2+'" stroke-width="1.5"/><path d="'+blade2+'" stroke="'+qf2+'" stroke-width="2.5" fill="none"/>';
+  s+='<text x="370" y="145" text-anchor="middle" font-size="12" fill="var(--foreground)">QF2·保护2</text>';
+  if(C.down==='fail'&&C.dir>0&&C.lf>L1&&C.lf<=L1+L2)s+='<text x="370" y="86" text-anchor="middle" font-size="12" fill="var(--red)">拒动</text>';
+  s+='<line x1="380" y1="'+y+'" x2="520" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/><text x="450" y="164" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">L2 = 60 km</text>';
+  s+='<line x1="520" y1="'+y+'" x2="545" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/><rect x="545" y="98" width="20" height="20" fill="none" stroke="var(--foreground)" stroke-width="1.5"/><path d="M545,'+y+' L565,'+y+'" stroke="var(--foreground)" stroke-width="2.5"/>';
+  s+='<text x="555" y="145" text-anchor="middle" font-size="12" fill="var(--foreground)">QF3</text><line x1="565" y1="'+y+'" x2="705" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/><text x="635" y="164" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">L3 = 60 km</text>';
+  s+='<line x1="705" y1="'+y+'" x2="738" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/><polygon points="748,'+y+' 736,'+(y-5)+' 736,'+(y+5)+'" fill="var(--foreground)"/><text x="724" y="145" text-anchor="middle" font-size="12" fill="var(--foreground)">负荷</text>';
+  s+='<line x1="'+(xf-6)+'" y1="'+(y-6)+'" x2="'+(xf+6)+'" y2="'+(y+6)+'" stroke="var(--red)" stroke-width="2.5"/><line x1="'+(xf-6)+'" y1="'+(y+6)+'" x2="'+(xf+6)+'" y2="'+(y-6)+'" stroke="var(--red)" stroke-width="2.5"/><text x="'+(xf+9)+'" y="'+(y-9)+'" font-size="12" fill="var(--red)">k</text>';
+  s+='<text x="125" y="184" font-size="11" fill="var(--muted-foreground)">保护范围为线路正方向、金属性故障下的整定 reach；过渡电阻会改变实际动作边界。</text>';
+  s+='</svg>';
+  out.diagram.innerHTML=s;
+}
+
+function render(C){
+  var W=680,H=460,ml=52,mr=16,mt=14,mb=40;
+  var RMIN=Math.min(-32,Math.floor((C.ZmR-8)/10)*10),RMAX=52;
+  var XMIN=Math.min(-32,Math.floor((C.ZmX-8)/10)*10),XMAX=88;
+  function px(r){return ml+(r-RMIN)/(RMAX-RMIN)*(W-ml-mr);}
+  function py(x){return H-mb-(x-XMIN)/(XMAX-XMIN)*(H-mt-mb);}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="阻抗平面">';
+  var rt=[-20,0,20,40], xt=[-20,0,20,40,60,80], i;
+  for(i=0;i<rt.length;i++){
+    s+='<line x1="'+px(rt[i])+'" y1="'+mt+'" x2="'+px(rt[i])+'" y2="'+(H-mb)+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+px(rt[i])+'" y="'+(H-mb+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">'+rt[i]+'</text>';
+  }
+  for(i=0;i<xt.length;i++){
+    s+='<line x1="'+ml+'" y1="'+py(xt[i])+'" x2="'+(W-mr)+'" y2="'+py(xt[i])+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+(ml-6)+'" y="'+(py(xt[i])+4)+'" text-anchor="end" font-size="12" fill="var(--muted-foreground)">'+xt[i]+'</text>';
+  }
+  s+='<line x1="'+ml+'" y1="'+py(0)+'" x2="'+(W-mr)+'" y2="'+py(0)+'" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<line x1="'+px(0)+'" y1="'+(H-mb)+'" x2="'+px(0)+'" y2="'+mt+'" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<polygon points="'+(W-mr)+','+py(0)+' '+(W-mr-8)+','+(py(0)-4)+' '+(W-mr-8)+','+(py(0)+4)+'" fill="var(--foreground)"/>';
+  s+='<polygon points="'+px(0)+','+mt+' '+(px(0)-4)+','+(mt+8)+' '+(px(0)+4)+','+(mt+8)+'" fill="var(--foreground)"/>';
+  s+='<text x="'+(W-mr-4)+'" y="'+(py(0)-8)+'" text-anchor="end" font-size="12" fill="var(--foreground)">R (Ω)</text>';
+  s+='<text x="'+(px(0)+8)+'" y="'+(mt+12)+'" font-size="12" fill="var(--foreground)">jX (Ω)</text>';
+  var cols=['var(--viz-series-3)','var(--viz-series-4)','var(--viz-series-5)'];
+  var names=['Ⅰ段','Ⅱ段','Ⅲ段'];
+  for(i=2;i>=0;i--){
+    var cx=px(Zset[i]/2*COS), cy=py(Zset[i]/2*SIN);
+    var rx=Zset[i]/2/(RMAX-RMIN)*(W-ml-mr);
+    var ry=Zset[i]/2/(XMAX-XMIN)*(H-mt-mb);
+    s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="'+cols[i]+'" fill-opacity="0.08" stroke="'+cols[i]+'" stroke-width="2"/>';
+    var tx=px(Zset[i]*COS), ty=py(Zset[i]*SIN);
+    var anch=i===0?'end':'start', ax=i===0?(tx-6):(tx+6);
+    s+='<circle cx="'+tx+'" cy="'+ty+'" r="3" fill="'+cols[i]+'"/>';
+    s+='<text x="'+ax+'" y="'+(ty-4)+'" text-anchor="'+anch+'" font-size="12" fill="var(--foreground)">'+names[i]+' '+Zset[i].toFixed(0)+' Ω</text>';
+  }
+  var ex=px(0.4*190*COS), ey=py(0.4*190*SIN);
+  s+='<line x1="'+px(0)+'" y1="'+py(0)+'" x2="'+ex+'" y2="'+ey+'" stroke="var(--foreground)" stroke-width="1.5" stroke-dasharray="5 4"/>';
+  var bx=px(ZL1*COS), by=py(ZL1*SIN);
+  s+='<circle cx="'+bx+'" cy="'+by+'" r="3.5" fill="var(--foreground)"/>';
+  s+='<text x="'+(bx+8)+'" y="'+(by+4)+'" text-anchor="start" font-size="12" fill="var(--muted-foreground)">本线路末端 (100 km)</text>';
+  s+='<text x="'+(ex-4)+'" y="'+(ey-8)+'" text-anchor="end" font-size="12" fill="var(--muted-foreground)">线路阻抗方向 (75°)</text>';
+  var mx=px(C.ZmR), my=py(C.ZmX);
+  if(C.rf>0&&C.dir>0){
+    var kx=px(C.Zk*COS), ky=py(C.Zk*SIN);
+    s+='<circle cx="'+kx+'" cy="'+ky+'" r="3.5" fill="none" stroke="var(--muted-foreground)" stroke-width="1.5"/>';
+    s+='<line x1="'+kx+'" y1="'+ky+'" x2="'+mx+'" y2="'+my+'" stroke="var(--muted-foreground)" stroke-width="1.5" stroke-dasharray="3 3"/>';
+    s+='<text x="'+((kx+mx)/2)+'" y="'+((ky+my)/2+14)+'" text-anchor="middle" font-size="11" fill="var(--muted-foreground)">+Rf</text>';
+  }
+  s+='<circle cx="'+mx+'" cy="'+my+'" r="5" fill="var(--primary)"><title>测量阻抗 Zm</title></circle>';
+  s+='<text x="'+(mx+9)+'" y="'+(my+4)+'" font-size="12" font-weight="500" fill="var(--foreground)">Zm</text>';
+  s+='</svg>';
+  out.plane.innerHTML=s;
+}
+
+function renderResult(C){
+  out.lfv.textContent=C.lf+' km';
+  out.rfv.textContent=C.rf+' Ω';
+  out.zm.textContent=C.ZmR.toFixed(1)+(C.ZmX>=0?' + j':' - j')+Math.abs(C.ZmX).toFixed(1);
+  if(C.dir<0)out.cap.textContent='反向故障 · 位于保护安装处背侧 '+C.lf+' km'+(C.rf>0?' · 过渡电阻 '+C.rf+' Ω':'');
+  else if(C.lf<=L1)out.cap.textContent='正向故障 · 本线路 '+C.lf+' km（'+(100*C.lf/L1).toFixed(0)+'%）处'+(C.rf>0?' · 过渡电阻 '+C.rf+' Ω':'');
+  else out.cap.textContent='正向故障 · L2 距母线B '+(C.lf-L1)+' km · 保护2'+(C.down==='fail'?'拒动':'正常')+(C.rf>0?' · 过渡电阻 '+C.rf+' Ω':'');
+  out.v1.textContent=Zset[0].toFixed(1)+' Ω';
+  out.v2.textContent=Zset[1].toFixed(1)+' Ω';
+  out.v3.textContent=Zset[2].toFixed(1)+' Ω';
+  out.calc.innerHTML='<div><b>整定计算过程（与手算对照）：</b></div>'+
+    '<div>ZL1 = '+ZL1.toFixed(1)+' Ω，ZL2 = '+ZL2.toFixed(1)+' Ω，ZL3 = '+ZL3.toFixed(1)+' Ω（阻抗角均为 75°）</div>'+
+    '<div>Ⅰ段：Zset1 = 0.85 × ZL1 = 0.85 × '+ZL1.toFixed(1)+' = <b>'+Zset[0].toFixed(1)+' Ω</b></div>'+
+    '<div>Ⅱ段：Zset2 = ZL1 + 0.5×ZL2 = '+ZL1.toFixed(1)+' + '+(0.5*ZL2).toFixed(1)+' = <b>'+Zset[1].toFixed(1)+' Ω</b></div>'+
+    '<div>Ⅲ段：Zset3 = ZL1 + ZL2 + 0.5×ZL3 = '+ZL1.toFixed(1)+' + '+ZL2.toFixed(1)+' + '+(0.5*ZL3).toFixed(1)+' = <b>'+Zset[2].toFixed(1)+' Ω</b>，线路方向 reach = 76/0.4 = <b>190 km</b></div>'+
+    '<div>时限：tⅡ,1 = tⅠ,2 + Δt = 0.05 + 0.5 = <b>0.55 s</b>；tⅢ,1 = tⅢ,2 + Δt = 1.5 + 0.5 = <b>2.0 s</b></div>'+
+    '<div>二次折算：Zm(二次) = Zm × CT/PT = Zm × 120/1100 ≈ ('+(C.ZmR*120/1100).toFixed(2)+(C.ZmX>=0?' + j':' - j')+(Math.abs(C.ZmX)*120/1100).toFixed(2)+') Ω</div>';
+}
+function conclusion(C){
+  if(C.downstreamTrip)return '故障位于下一级线路 L2，保护2在 '+C.downstreamT.toFixed(2)+' s 优先跳闸；保护1已启动的各段随后返回，不越级动作。将“保护2状态”改为拒动，可观察保护1的远后备。';
+  if(C.zone===1)return '距离Ⅰ段动作：测量阻抗落入Ⅰ段动作圆，约 0.05 s 瞬时跳闸；Ⅱ、Ⅲ段启动后返回。';
+  if(C.zone===2)return '距离Ⅱ段动作：Zm 超出Ⅰ段圆但落入Ⅱ段圆，在故障后 0.55 s 出口跳闸，Ⅲ段启动后返回。'+(C.zkInZ1&&C.rf>0?' 注意：故障点本身在Ⅰ段范围内，是过渡电阻 Rf 把测量阻抗“顶”出了Ⅰ段圆（Ⅰ段拒动，由Ⅱ段后备切除）。':'');
+  if(C.zone===3)return '距离Ⅲ段动作：Zm 落入Ⅲ段圆，在故障后 2.0 s 出口跳闸'+(C.lf>L1?'（保护2拒动，保护1承担远后备）':'（后备保护作用）')+'。'+(C.zkInZ1&&C.rf>0?' 故障点在Ⅰ段范围内，过渡电阻导致Ⅰ、Ⅱ段均拒动。':'');
+  if(C.dir<0)return '反向故障：Zm 位于第三象限，方向阻抗圆不含该点，各段均不动作——体现方向阻抗元件的方向性。';
+  if(C.lf>L1+L2)return '故障点超出Ⅲ段保护范围，本保护各段均不动作（应由下一级保护切除）。';
+  return '测量阻抗落在所有动作圆之外，各段均未启动，保护不动作。';
+}
+function resetStages(){
+  [out.st1,out.st2,out.st3].forEach(function(st){st.textContent='—';st.style.color='var(--muted-foreground)';});
+}
+function refresh(){
+  var C=compute();
+  render(C);renderDiagram(C,false);renderResult(C);resetStages();
+  out.tl.style.display='none';
+  out.conc.style.color='var(--muted-foreground)';
+  out.conc.textContent='调整工况后，点击「模拟故障」观察各段启动与跳闸过程。';
+}
+function updateStages(C,t){
+  var sts=[out.st1,out.st2,out.st3];
+  for(var j=0;j<3;j++){
+    var txt,col;
+    if(!C.picked[j]){txt='未启动';col='var(--muted-foreground)';}
+    else if(C.downstreamTrip){txt=t<C.downstreamT?'启动':'返回';col=t<C.downstreamT?'var(--orange)':'var(--muted-foreground)';}
+    else if(C.zone===0||t<C.tripT){txt='启动';col='var(--orange)';}
+    else if(C.zone===j+1){txt='跳闸';col='var(--red)';}
+    else{txt='返回';col='var(--muted-foreground)';}
+    sts[j].textContent=txt;sts[j].style.color=col;
+  }
+}
+function runSim(){
+  if(running)return;
+  running=true;ui.run.disabled=true;
+  var C=compute();
+  render(C);renderDiagram(C,false);renderResult(C);resetStages();
+  out.conc.style.color='var(--foreground)';out.conc.textContent='故障发生，阻抗元件测量中……';
+  out.tl.style.display='flex';
+  var total=C.downstreamTrip?C.downstreamT:(C.zone?C.tripT:2.1);
+  var playback=Math.max(0.6,total);
+  var tripped=false;
+  function finish(){
+    updateStages(C,C.endT);
+    out.conc.textContent=conclusion(C);
+    out.conc.style.color=(C.zone||C.downstreamTrip)?'var(--foreground)':'var(--red)';
+    running=false;ui.run.disabled=false;
+  }
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){
+    out.tlf.style.width='100%';out.tlt.textContent='t = '+total.toFixed(2)+' s';
+    if(C.downstreamTrip)renderDiagram(C,false,true);
+    else if(C.zone)renderDiagram(C,true,false);
+    finish();return;
+  }
+  var start=null;
+  function frame(ts){
+    if(start===null)start=ts;
+    var t=Math.min((ts-start)/(playback*1000)*total,total);
+    out.tlf.style.width=Math.min(t/total,1)*100+'%';
+    out.tlt.textContent='t = '+t.toFixed(2)+' s';
+    updateStages(C,t);
+    if(C.downstreamTrip&&t>=C.downstreamT&&!tripped){tripped=true;renderDiagram(C,false,true);}
+    else if(!C.downstreamTrip&&C.zone&&t>=C.tripT&&!tripped){tripped=true;renderDiagram(C,true,false);}
+    if(t<total){requestAnimationFrame(frame);}else{finish();}
+  }
+  requestAnimationFrame(frame);
+}
+['lf','rf','dir','down'].forEach(function(k){
+  ui[k].addEventListener('input',refresh);
+  ui[k].addEventListener('change',refresh);
+});
+var CASES={
+  zone1:{v:{lf:60,rf:0,dir:1,down:'normal'},note:'观察要点：60 km 处金属性短路，Zm 沿线路阻抗方向落在Ⅰ段圆内，0.05 s 瞬时跳闸。思考：为什么方向阻抗圆经过坐标原点？'},
+  arc:{v:{lf:60,rf:20,dir:1,down:'normal'},note:'观察要点：故障点不变，仅加入 20 Ω 过渡电阻，Zm 被“顶”出Ⅰ段圆，Ⅰ段拒动，由Ⅱ段在 0.55 s 后备跳闸。思考：过渡电阻主要影响哪一段？如何减小其影响？'},
+  remote:{v:{lf:150,rf:0,dir:1,down:'fail'},note:'观察要点：故障位于 L2 距母线B 50 km 处，且保护2拒动；只有保护1Ⅲ段圆能覆盖，2.0 s 远后备跳闸。再把保护2改为正常，对比选择性动作。'},
+  reverse:{v:{lf:50,rf:0,dir:-1,down:'normal'},note:'观察要点：反向故障时测量阻抗位于第三象限，三个方向阻抗圆都不含该点，保护不动作。思考：若改用全阻抗圆会怎样？'}
+};
+var caseEl=el('dps-case'), caseNote=el('dps-case-note');
+caseEl.addEventListener('change',function(){
+  var v=caseEl.value;
+  if(!v){caseNote.textContent='';return;}
+  var P=CASES[v];
+  ui.lf.value=P.v.lf; ui.rf.value=P.v.rf; ui.dir.value=P.v.dir; ui.down.value=P.v.down;
+  caseNote.textContent=P.note;
+  refresh(); runSim();
+});
+ui.run.addEventListener('click',runSim);
+refresh();
+})();
+</script>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,327 @@
+﻿<!doctype>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08243f">
+<title>变压器纵差比率制动特性 · 电力系统继电保护原理虚拟仿真</title>
+<style>
+:root{--background:#f2f6fa;--foreground:#172b3f;--card:#fff;--card-foreground:#172b3f;--muted:#edf3f7;--muted-foreground:#587086;--primary:#1268b3;--primary-foreground:#fff;--border:#d9e4ed;--red:#c43b35;--green:#168566;--orange:#d37916;--accent:#e8f3fa;--accent-foreground:#172b3f;--viz-series-1:#1268b3;--viz-series-2:#e18a23;--viz-series-3:#168566;--viz-series-4:#8555b5;--viz-series-5:#d44b45;--viz-series-6:#168a9e}
+*{box-sizing:border-box}
+body{margin:0;padding:0 16px 42px;background:var(--background);color:var(--foreground);font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.65}
+.lab-header{margin:0 -16px;background:linear-gradient(112deg,#071d35,#0a3556 65%,#0c526c);color:#fff;border-bottom:2px solid #20a9c4;box-shadow:0 4px 16px rgba(8,38,62,.14)}
+.lab-header-inner{max-width:1080px;margin:auto;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lab-brand{display:flex;align-items:center;gap:11px}.lab-mark{width:37px;height:37px;display:grid;place-items:center;border:1px solid rgba(105,216,235,.45);border-radius:8px;color:#70d8e9;background:rgba(40,181,205,.09)}
+.lab-brand b{display:block;font-size:15px;letter-spacing:.5px;font-weight:600}.lab-brand small{display:block;color:#92b6cb;font-size:9px;letter-spacing:1.6px;line-height:1.4}.lab-return{color:#d4e8f3;font-size:12px;text-decoration:none;border:1px solid rgba(180,215,230,.3);border-radius:6px;padding:5px 11px;white-space:nowrap;transition:.15s}.lab-return:hover{background:rgba(255,255,255,.1);border-color:#71d2e4}
+.lab-subhead{max-width:1080px;margin:18px auto 0;padding:0 4px;display:flex;align-items:center;gap:9px;color:#58738a;font-size:12px}.lab-subhead:before{content:"";width:18px;height:2px;background:#18a9c7}.lab-subhead span{color:#1268b3;letter-spacing:.6px}
+.wrap{max-width:1080px;margin:8px auto 0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:23px 28px 27px;box-shadow:0 7px 24px rgba(21,63,92,.06);position:relative;overflow:hidden}
+.wrap:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#1268b3,#18a9c7 45%,transparent 90%)}
+h3{margin:3px 0 14px;font-size:20px;font-weight:600;line-height:1.45}.wrap>h3{padding-bottom:12px;border-bottom:1px solid var(--border);color:#103c60}
+.text-small{font-size:12px}.text-muted{color:var(--muted-foreground)}.tabular-nums{font-variant-numeric:tabular-nums}.text-end{text-align:right}.text-nowrap{white-space:nowrap}
+.table{width:100%;border-collapse:collapse;margin:5px 0 9px}.table-sm td,.table-sm th{padding:6px 9px;border-bottom:1px solid var(--border);text-align:left}.table-sm th{background:#f1f6fa;color:#35566e;font-weight:500}.table-sm tr:last-child td{border-bottom:0}.table-sm th.text-end,.table-sm td.text-end{text-align:right}
+.form-range{width:100%;accent-color:var(--primary);cursor:pointer}.form-select{padding:6px 30px 6px 10px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);font-family:inherit;font-size:14px;outline:none}.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,104,179,.12)}
+.form-check{display:inline-flex;align-items:center;gap:5px;cursor:pointer}.form-check-input{accent-color:var(--primary);width:15px;height:15px;margin:0}
+.btn{padding:7px 17px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);cursor:pointer;font-family:inherit;font-size:14px;transition:background .15s,border-color .15s,box-shadow .15s}.btn:hover{background:#edf5fa;border-color:#7ba9c5}.btn-primary{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary);box-shadow:0 2px 5px rgba(18,104,179,.16)}.btn-primary:hover{background:#0d599c;border-color:#0d599c}.btn:focus-visible{outline:3px solid rgba(24,169,199,.28);outline-offset:2px}.btn-primary:disabled{opacity:.55;cursor:default}
+input[type="number"],input[type="text"]{border:1px solid #bdcedb;border-radius:5px;padding:5px 8px;color:var(--foreground);font-family:inherit}input[type="number"]:focus,input[type="text"]:focus{outline:2px solid rgba(18,104,179,.15);border-color:var(--primary)}
+@media(max-width:640px){body{padding:0 8px 26px}.lab-header{margin:0 -8px}.lab-header-inner{padding:12px 14px}.lab-brand b{font-size:13px}.lab-brand small{font-size:8px;letter-spacing:1px}.lab-mark{width:32px;height:32px}.lab-return{padding:4px 8px}.wrap{padding:19px 15px 22px}.wrap>h3{font-size:18px}.lab-subhead{padding:0 7px}.table-sm td,.table-sm th{padding:5px}}
+</style>
+</head>
+<body>
+<header class="lab-header"><div class="lab-header-inner">
+  <div class="lab-brand"><span class="lab-mark"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13.2 2 5.8 13h5.6L10.8 22l7.4-11h-5.6L13.2 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><span><b>电力系统继电保护原理 · 虚拟仿真实验</b><small>RELAY PROTECTION VIRTUAL LAB</small></span></div>
+  <a class="lab-return" href="index.html">← 返回实验目录</a>
+</div></header>
+<div class="lab-subhead"><span>模块 03 · 变压器纵差保护</span> / 交互实验台</div>
+<main class="wrap"><div id="tdr-sim">
+<style>
+#tdr-sim .tdr-controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin:6px 0 12px}
+#tdr-sim .tdr-field{display:flex;flex-direction:column;gap:4px;flex:1 1 150px;min-width:140px}
+#tdr-sim .tdr-field>span{font-weight:500}
+#tdr-sim .tdr-grid{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+#tdr-sim .tdr-chart{flex:3 1 420px;min-width:300px}
+#tdr-sim .tdr-result{flex:2 1 260px;min-width:240px}
+#tdr-sim .tdr-plabel{font-weight:500;margin:4px 0 6px}
+#tdr-sim .tdr-conc{margin-top:10px;font-weight:500}
+#tdr-sim .tdr-metrics{margin-top:8px;display:flex;flex-direction:column;gap:2px}
+#tdr-sim .tdr-params{background:var(--muted);border-radius:8px;padding:8px 12px;margin:6px 0 12px}
+#tdr-sim .tdr-tl{display:none;align-items:center;gap:10px;margin-top:10px}
+#tdr-sim .tdr-track{flex:1;height:8px;background:var(--muted);border-radius:4px;overflow:hidden}
+#tdr-sim #tdr-tl-fill{height:100%;width:0;background:var(--viz-series-1)}
+#tdr-sim svg{display:block;width:100%;height:auto}
+</style>
+
+<h3>变压器纵联差动保护 · 比率制动特性</h3>
+
+<div class="tdr-params text-small"><b>给定参数（供分析计算）：</b>差动电流 Iop = |İ1+İ2|，制动电流 Ires = (|İ1|+|İ2|)/2，均以额定电流 Ie 为基准（标幺值）；制动特性拐点 Ires0 = 1.0 Ie；不平衡电流假设：正常运行及外部短路 CT 传变正常时为穿越电流的 2%，CT 饱和时为 10%（此时 Ires ≈ 穿越电流）；内部短路按左侧单端供电、右侧无源负荷，即 Iop = Ik、Ires = Ik/2。比率制动系数 K 与最小动作电流 Iop.min 用滑块调节。保护出口固有动作时间教学取约 0.06 s，动画未另计断路器燃弧时间。</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 10px">
+  <span style="font-weight:500">典型案例：</span>
+  <select class="form-select" id="tdr-case">
+    <option value="">手动探索（自行调节参数）</option>
+    <option value="extsat">案例1：外部短路 CT 饱和，比率制动防误动</option>
+    <option value="int">案例2：内部短路灵敏动作</option>
+    <option value="ksen">案例3：内部小电流故障，灵敏度校验不合格</option>
+  </select>
+  <span class="text-small" id="tdr-case-note" style="flex:1 1 260px"></span>
+</div>
+
+<div class="tdr-controls">
+  <label class="tdr-field"><span>工况</span>
+    <select class="form-select" id="tdr-sc">
+      <option value="load" selected>正常运行（负荷电流）</option>
+      <option value="ext">外部短路（CT 传变正常）</option>
+      <option value="extsat">外部短路（CT 饱和，10% 误差）</option>
+      <option value="int">内部短路（单侧电源供电）</option>
+    </select></label>
+  <label class="tdr-field"><span>电流倍数（×额定）：<span class="tabular-nums" id="tdr-k-v">1.0</span></span>
+    <input type="range" class="form-range" id="tdr-k" min="0.2" max="10" step="0.1" value="1"></label>
+  <label class="tdr-field"><span>比率制动系数 K：<span class="tabular-nums" id="tdr-kb-v">0.50</span></span>
+    <input type="range" class="form-range" id="tdr-kb" min="0.3" max="0.7" step="0.05" value="0.5"></label>
+  <label class="tdr-field"><span>最小动作电流 Iop.min：<span class="tabular-nums" id="tdr-i0-v">0.30</span> Ie</span>
+    <input type="range" class="form-range" id="tdr-i0" min="0.2" max="0.5" step="0.05" value="0.3"></label>
+  <button type="button" class="btn btn-primary" id="tdr-run">模拟故障</button>
+</div>
+
+<div class="tdr-grid">
+  <div class="tdr-chart">
+    <div class="tdr-plabel">一次接线与差动保护区</div>
+    <div id="tdr-diagram" role="img" aria-label="变压器差动保护接线图"></div>
+    <div class="tdr-plabel">制动特性平面（标幺值，以额定电流 Ie 为基准）</div>
+    <div id="tdr-plane" role="img" aria-label="比率制动特性曲线与当前工况工作点"></div>
+    <div class="text-small" style="color:var(--muted-foreground);margin-top:2px">动作区为折线上方阴影区；工作点落入动作区则差动保护出口跳闸。</div>
+  </div>
+  <div class="tdr-result">
+    <div class="tdr-plabel">动作分析</div>
+    <div>差动电流 Iop = <span class="tabular-nums" id="tdr-iop" style="font-weight:500">—</span> Ie　制动电流 Ires = <span class="tabular-nums" id="tdr-ires" style="font-weight:500">—</span> Ie</div>
+    <table class="table table-sm" style="margin-top:6px">
+      <thead><tr><th>元件</th><th>判据</th><th class="text-nowrap">状态</th></tr></thead>
+      <tbody>
+        <tr><td>差动启动元件</td><td class="text-nowrap">Iop ≥ Iop.min</td><td class="text-nowrap" id="tdr-st1">—</td></tr>
+        <tr><td>比率制动元件</td><td class="text-nowrap">Iop &lt; Iop.set(Ires) 时制动</td><td class="text-nowrap" id="tdr-st2">—</td></tr>
+        <tr><td>保护出口</td><td class="text-nowrap">启动 且 未制动 → 跳闸</td><td class="text-nowrap" id="tdr-st3">—</td></tr>
+      </tbody>
+    </table>
+    <div class="tdr-metrics text-small" id="tdr-metrics"></div>
+    <div class="tdr-conc" id="tdr-conc" aria-live="polite">选择工况后，点击「模拟故障」观察差动保护的动作逻辑。</div>
+    <div class="tdr-tl" id="tdr-tl">
+      <div class="tdr-track"><div id="tdr-tl-fill"></div></div>
+      <span class="tabular-nums text-small" id="tdr-tl-t">t = 0.00 s</span>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+(function(){
+var IRES0=1.0, TTRIP=0.06;
+function el(id){return document.getElementById(id);}
+var ui={sc:el('tdr-sc'),k:el('tdr-k'),kb:el('tdr-kb'),i0:el('tdr-i0'),run:el('tdr-run')};
+var out={kv:el('tdr-k-v'),kbv:el('tdr-kb-v'),i0v:el('tdr-i0-v'),plane:el('tdr-plane'),diagram:el('tdr-diagram'),
+  iop:el('tdr-iop'),ires:el('tdr-ires'),st1:el('tdr-st1'),st2:el('tdr-st2'),st3:el('tdr-st3'),
+  metrics:el('tdr-metrics'),conc:el('tdr-conc'),tl:el('tdr-tl'),tlf:el('tdr-tl-fill'),tlt:el('tdr-tl-t')};
+var running=false;
+
+function renderDiagram(C,tripped){
+  var y=72;
+  var qf=tripped?'var(--red)':'var(--foreground)';
+  var bladeL=tripped?'M110,'+y+' L126,56':'M110,'+y+' L130,'+y;
+  var bladeR=tripped?'M430,'+y+' L446,56':'M430,'+y+' L450,'+y;
+  var s='<svg viewBox="0 0 680 158" role="img" aria-label="双绕组变压器差动保护接线图">';
+  s+='<rect x="166" y="30" width="238" height="88" rx="6" fill="var(--viz-series-1)" fill-opacity="0.05" stroke="var(--viz-series-1)" stroke-width="1.2" stroke-dasharray="5 4"/>';
+  s+='<text x="285" y="22" text-anchor="middle" font-size="12" fill="var(--viz-series-1)">差动保护区</text>';
+  s+='<circle cx="30" cy="'+y+'" r="14" fill="none" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<text x="30" y="'+(y+4)+'" text-anchor="middle" font-size="13" fill="var(--foreground)">~</text>';
+  s+='<text x="30" y="140" text-anchor="middle" font-size="12" fill="var(--foreground)">系统Ⅰ</text>';
+  s+='<line x1="44" y1="'+y+'" x2="110" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<rect x="110" y="'+(y-10)+'" width="20" height="20" fill="none" stroke="'+qf+'" stroke-width="1.5"/>';
+  s+='<path d="'+bladeL+'" stroke="'+qf+'" stroke-width="2.5" fill="none"/>';
+  s+='<text x="120" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">QF1</text>';
+  s+='<line x1="130" y1="'+y+'" x2="266" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<circle cx="185" cy="'+y+'" r="9" fill="var(--card)" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<text x="185" y="140" text-anchor="middle" font-size="12" fill="var(--foreground)">CT1</text>';
+  s+='<circle cx="288" cy="'+y+'" r="23" fill="none" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<circle cx="312" cy="'+y+'" r="23" fill="none" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<text x="300" y="140" text-anchor="middle" font-size="12" fill="var(--foreground)">变压器</text>';
+  s+='<line x1="335" y1="'+y+'" x2="430" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<circle cx="385" cy="'+y+'" r="9" fill="var(--card)" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<text x="385" y="140" text-anchor="middle" font-size="12" fill="var(--foreground)">CT2</text>';
+  s+='<rect x="430" y="'+(y-10)+'" width="20" height="20" fill="none" stroke="'+qf+'" stroke-width="1.5"/>';
+  s+='<path d="'+bladeR+'" stroke="'+qf+'" stroke-width="2.5" fill="none"/>';
+  s+='<text x="440" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">QF2</text>';
+  s+='<line x1="450" y1="'+y+'" x2="566" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<polygon points="578,'+y+' 564,'+(y-6)+' 564,'+(y+6)+'" fill="var(--foreground)"/>';
+  s+='<text x="560" y="140" text-anchor="middle" font-size="12" fill="var(--foreground)">无源负荷</text>';
+  s+='<line x1="150" y1="48" x2="205" y2="48" stroke="var(--viz-series-1)" stroke-width="1.8"/>';
+  s+='<polygon points="205,48 197,44 197,52" fill="var(--viz-series-1)"/>';
+  s+='<text x="168" y="42" font-size="12" fill="var(--viz-series-1)">İ1</text>';
+  s+='<line x1="420" y1="48" x2="365" y2="48" stroke="var(--viz-series-1)" stroke-width="1.8"/>';
+  s+='<polygon points="365,48 373,44 373,52" fill="var(--viz-series-1)"/>';
+  s+='<text x="392" y="42" font-size="12" fill="var(--viz-series-1)">İ2</text>';
+  if(C.sc==='int'){
+    s+='<line x1="294" y1="'+(y-7)+'" x2="306" y2="'+(y+7)+'" stroke="var(--red)" stroke-width="2.5"/>';
+    s+='<line x1="294" y1="'+(y+7)+'" x2="306" y2="'+(y-7)+'" stroke="var(--red)" stroke-width="2.5"/>';
+    s+='<text x="318" y="'+(y-12)+'" font-size="12" fill="var(--red)">k（内部故障）</text>';
+  }else if(C.sc==='ext'||C.sc==='extsat'){
+    s+='<line x1="466" y1="'+(y-7)+'" x2="478" y2="'+(y+7)+'" stroke="var(--red)" stroke-width="2.5"/>';
+    s+='<line x1="466" y1="'+(y+7)+'" x2="478" y2="'+(y-7)+'" stroke="var(--red)" stroke-width="2.5"/>';
+    s+='<text x="486" y="'+(y-12)+'" font-size="12" fill="var(--red)">k（区外故障）</text>';
+  }
+  s+='</svg>';
+  out.diagram.innerHTML=s;
+}
+
+function iopSet(ires,i0,kb){
+  return ires<=IRES0? i0 : i0+kb*(ires-IRES0);
+}
+function compute(){
+  var sc=ui.sc.value, k=+ui.k.value, kb=+ui.kb.value, i0=+ui.i0.value;
+  var iop, ires;
+  if(sc==='extsat'){ iop=0.10*k; ires=k; }
+  else if(sc==='int'){ iop=k; ires=k/2; }
+  else { iop=0.02*k; ires=k; }
+  var set=iopSet(ires,i0,kb);
+  var started=iop>=i0;
+  var restrained=iop<set;
+  var act=started&&!restrained;
+  var ksen=sc==='int'? iop/set : NaN;
+  return {sc:sc,k:k,kb:kb,i0:i0,iop:iop,ires:ires,set:set,started:started,restrained:restrained,act:act,ksen:ksen};
+}
+
+function render(C){
+  var W=680,H=380,ml=52,mr=16,mt=14,mb=40;
+  var XMAX=10, YMAX=Math.max(6,Math.ceil(Math.max(C.iop,iopSet(XMAX,C.i0,C.kb))+0.5));
+  function px(v){return ml+v/XMAX*(W-ml-mr);}
+  function py(v){return H-mb-v/YMAX*(H-mt-mb);}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="比率制动特性平面">';
+  var xt=[0,2,4,6,8,10], yt=[], i;
+  for(i=0;i<=YMAX;i+=(YMAX>8?2:1))yt.push(i);
+  for(i=0;i<xt.length;i++){
+    s+='<line x1="'+px(xt[i])+'" y1="'+mt+'" x2="'+px(xt[i])+'" y2="'+(H-mb)+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+px(xt[i])+'" y="'+(H-mb+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">'+xt[i]+'</text>';
+  }
+  for(i=0;i<yt.length;i++){
+    s+='<line x1="'+ml+'" y1="'+py(yt[i])+'" x2="'+(W-mr)+'" y2="'+py(yt[i])+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+(ml-6)+'" y="'+(py(yt[i])+4)+'" text-anchor="end" font-size="12" fill="var(--muted-foreground)">'+yt[i]+'</text>';
+  }
+  s+='<text x="'+((ml+W-mr)/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">制动电流 Ires (×Ie)</text>';
+  s+='<text x="14" y="'+((mt+H-mb)/2)+'" transform="rotate(-90 14 '+((mt+H-mb)/2)+')" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">差动电流 Iop (×Ie)</text>';
+  var yAtEnd=iopSet(XMAX,C.i0,C.kb);
+  var poly=px(0)+','+py(C.i0)+' '+px(IRES0)+','+py(C.i0)+' '+px(XMAX)+','+py(yAtEnd)+' '+px(XMAX)+','+py(YMAX)+' '+px(0)+','+py(YMAX);
+  s+='<polygon points="'+poly+'" fill="var(--viz-series-5)" fill-opacity="0.10"/>';
+  s+='<text x="'+px(5)+'" y="'+(mt+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">动作区</text>';
+  s+='<text x="'+px(4.2)+'" y="'+(py(0.35))+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">制动区</text>';
+  s+='<path d="M'+px(0)+','+py(C.i0)+' L'+px(IRES0)+','+py(C.i0)+' L'+px(XMAX)+','+py(yAtEnd)+'" fill="none" stroke="var(--viz-series-5)" stroke-width="2.5"/>';
+  s+='<text x="'+px(0.15)+'" y="'+(py(C.i0)-6)+'" font-size="12" fill="var(--foreground)">Iop.min = '+C.i0.toFixed(2)+'</text>';
+  var xl=(IRES0+XMAX)/2;
+  s+='<text x="'+px(xl+1.2)+'" y="'+(py(iopSet(xl,C.i0,C.kb))+18)+'" text-anchor="middle" font-size="12" fill="var(--foreground)">斜率 K = '+C.kb.toFixed(2)+'</text>';
+  s+='<circle cx="'+px(IRES0)+'" cy="'+py(C.i0)+'" r="3.5" fill="var(--viz-series-5)"/>';
+  var mx=px(C.ires), my=py(C.iop);
+  s+='<circle cx="'+mx+'" cy="'+my+'" r="5.5" fill="'+(C.act?'var(--red)':'var(--green)')+'"><title>当前工作点</title></circle>';
+  var anch=mx>px(6)?'end':'start', tx=mx>px(6)?(mx-9):(mx+9);
+  s+='<text x="'+tx+'" y="'+(my-8)+'" text-anchor="'+anch+'" font-size="12" font-weight="500" fill="var(--foreground)">工作点 ('+C.ires.toFixed(2)+', '+C.iop.toFixed(2)+')</text>';
+  s+='</svg>';
+  out.plane.innerHTML=s;
+}
+
+function renderResult(C){
+  var names={load:'正常运行',ext:'外部短路（CT 正常）',extsat:'外部短路（CT 饱和）',int:'内部短路'};
+  out.kv.textContent=C.k.toFixed(1);
+  out.kbv.textContent=C.kb.toFixed(2);
+  out.i0v.textContent=C.i0.toFixed(2);
+  out.iop.textContent=C.iop.toFixed(3);
+  out.ires.textContent=C.ires.toFixed(2);
+  var m='<div>当前工况：'+names[C.sc]+'，电流 '+C.k.toFixed(1)+' × Ie；该制动电流下动作门槛 Iop.set = '+C.set.toFixed(3)+' Ie</div>';
+  if(C.sc==='int'){
+    var ok=C.ksen>=2;
+    m+='<div>内部故障灵敏系数 Ksen = Iop / Iop.set = <span style="color:'+(ok?'var(--green)':'var(--red)')+'">'+C.ksen.toFixed(2)+'（要求 ≥ 2，'+(ok?'合格':'不合格')+'）</span></div>';
+  }
+  out.metrics.innerHTML=m;
+}
+function conclusion(C){
+  if(C.act){
+    if(C.sc==='int')return {t:'差动保护动作：内部短路时差动电流远大于制动特性门槛，约 0.06 s 出口跳开各侧断路器。',c:'var(--foreground)'};
+    return {t:'保护误动！工作点进入动作区：'+(C.sc==='extsat'?'外部短路 CT 饱和产生的不平衡电流超过了动作门槛，应增大 K 或 Iop.min。':'不平衡电流超过门槛，请检查整定。'),c:'var(--red)'};
+  }
+  if(C.sc==='int')return {t:'保护未出口：内部故障未动作，灵敏系数不足，应减小 K 或 Iop.min 后重新校验。',c:'var(--red)'};
+  if(C.sc==='extsat')return {t:'可靠制动：CT 饱和产生 10% 不平衡电流，但比率制动特性随穿越电流抬高门槛，保护不误动——这就是比率制动的意义。',c:'var(--green)'};
+  return {t:'可靠制动：正常运行/外部短路时差动电流仅为微小不平衡电流，工作点远在制动区内，保护不出口。',c:'var(--green)'};
+}
+function resetStages(){
+  [out.st1,out.st2,out.st3].forEach(function(st){st.textContent='—';st.style.color='var(--muted-foreground)';});
+}
+function refresh(){
+  var C=compute();
+  render(C);renderDiagram(C,false);renderResult(C);resetStages();
+  out.tl.style.display='none';
+  out.conc.style.color='var(--muted-foreground)';
+  out.conc.textContent='选择工况后，点击「模拟故障」观察差动保护的动作逻辑。';
+}
+function updateStages(C,t){
+  var M='var(--muted-foreground)', O='var(--orange)', R='var(--red)', G='var(--green)';
+  if(t<0.02){resetStages();return;}
+  out.st1.textContent=C.started?'启动':'未启动';
+  out.st1.style.color=C.started?O:M;
+  out.st2.textContent=C.restrained?'制动':'解除制动';
+  out.st2.style.color=C.restrained?G:R;
+  if(t<TTRIP){out.st3.textContent='……';out.st3.style.color=M;}
+  else if(C.act){out.st3.textContent='跳闸出口';out.st3.style.color=R;}
+  else{out.st3.textContent='不出口';out.st3.style.color=M;}
+}
+function runSim(){
+  if(running)return;
+  running=true;ui.run.disabled=true;
+  var C=compute();
+  render(C);renderDiagram(C,false);renderResult(C);resetStages();
+  out.conc.style.color='var(--foreground)';out.conc.textContent='故障/工况施加，差动元件逻辑判断中……';
+  out.tl.style.display='flex';
+  var total=TTRIP, playback=600;
+  var tripped=false;
+  function finish(){
+    updateStages(C,1);
+    var r=conclusion(C);
+    out.conc.textContent=r.t;out.conc.style.color=r.c;
+    running=false;ui.run.disabled=false;
+  }
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){
+    out.tlf.style.width='100%';out.tlt.textContent='t = '+total.toFixed(2)+' s';
+    if(C.act){renderDiagram(C,true);}
+    finish();return;
+  }
+  var start=null;
+  function frame(ts){
+    if(start===null)start=ts;
+    var t=Math.min((ts-start)/playback*total,total);
+    out.tlf.style.width=Math.min(t/total,1)*100+'%';
+    out.tlt.textContent='t = '+t.toFixed(2)+' s';
+    updateStages(C,t);
+    if(C.act&&t>=TTRIP&&!tripped){tripped=true;renderDiagram(C,true);}
+    if(t<total){requestAnimationFrame(frame);}else{finish();}
+  }
+  requestAnimationFrame(frame);
+}
+['sc','k','kb','i0'].forEach(function(key){
+  ui[key].addEventListener('input',refresh);
+  ui[key].addEventListener('change',refresh);
+});
+var CASES={
+  extsat:{v:{sc:'extsat',k:8,kb:0.5,i0:0.3},note:'观察要点：8 倍穿越电流下 CT 饱和产生 0.8 Ie 的不平衡电流，但制动特性门槛已抬高到 3.8 Ie，保护可靠制动。思考：若把 K 降到 0.3，门槛如何变化？'},
+  int:{v:{sc:'int',k:4,kb:0.5,i0:0.3},note:'观察要点：内部短路时差动电流等于全部故障电流，工作点远在动作区上方，保护 0.06 s 出口。思考：为什么内部故障时 Ires 只有 Iop 的一半？'},
+  ksen:{v:{sc:'int',k:0.8,kb:0.5,i0:0.5},note:'观察要点：内部小电流故障仍能动作，但灵敏系数 Ksen = 1.6 < 2，整定不合格。思考：降低 Iop.min 后重新校验，灵敏度如何变化？'}
+};
+var caseEl=el('tdr-case'), caseNote=el('tdr-case-note');
+caseEl.addEventListener('change',function(){
+  var v=caseEl.value;
+  if(!v){caseNote.textContent='';return;}
+  var P=CASES[v];
+  ui.sc.value=P.v.sc; ui.k.value=P.v.k; ui.kb.value=P.v.kb; ui.i0.value=P.v.i0;
+  caseNote.textContent=P.note;
+  refresh(); runSim();
+});
+ui.run.addEventListener('click',runSim);
+refresh();
+})();
+</script>
+
+</main>
+</body>
+</html>

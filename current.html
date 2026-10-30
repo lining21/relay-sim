@@ -1,0 +1,480 @@
+﻿<!doctype>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08243f">
+<title>三段式电流保护 · 电力系统继电保护原理虚拟仿真</title>
+<style>
+:root{--background:#f2f6fa;--foreground:#172b3f;--card:#fff;--card-foreground:#172b3f;--muted:#edf3f7;--muted-foreground:#587086;--primary:#1268b3;--primary-foreground:#fff;--border:#d9e4ed;--red:#c43b35;--green:#168566;--orange:#d37916;--accent:#e8f3fa;--accent-foreground:#172b3f;--viz-series-1:#1268b3;--viz-series-2:#e18a23;--viz-series-3:#168566;--viz-series-4:#8555b5;--viz-series-5:#d44b45;--viz-series-6:#168a9e}
+*{box-sizing:border-box}
+body{margin:0;padding:0 16px 42px;background:var(--background);color:var(--foreground);font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.65}
+.lab-header{margin:0 -16px;background:linear-gradient(112deg,#071d35,#0a3556 65%,#0c526c);color:#fff;border-bottom:2px solid #20a9c4;box-shadow:0 4px 16px rgba(8,38,62,.14)}
+.lab-header-inner{max-width:1080px;margin:auto;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lab-brand{display:flex;align-items:center;gap:11px}.lab-mark{width:37px;height:37px;display:grid;place-items:center;border:1px solid rgba(105,216,235,.45);border-radius:8px;color:#70d8e9;background:rgba(40,181,205,.09)}
+.lab-brand b{display:block;font-size:15px;letter-spacing:.5px;font-weight:600}.lab-brand small{display:block;color:#92b6cb;font-size:9px;letter-spacing:1.6px;line-height:1.4}.lab-return{color:#d4e8f3;font-size:12px;text-decoration:none;border:1px solid rgba(180,215,230,.3);border-radius:6px;padding:5px 11px;white-space:nowrap;transition:.15s}.lab-return:hover{background:rgba(255,255,255,.1);border-color:#71d2e4}
+.lab-subhead{max-width:1080px;margin:18px auto 0;padding:0 4px;display:flex;align-items:center;gap:9px;color:#58738a;font-size:12px}.lab-subhead:before{content:"";width:18px;height:2px;background:#18a9c7}.lab-subhead span{color:#1268b3;letter-spacing:.6px}
+.wrap{max-width:1080px;margin:8px auto 0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:23px 28px 27px;box-shadow:0 7px 24px rgba(21,63,92,.06);position:relative;overflow:hidden}
+.wrap:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#1268b3,#18a9c7 45%,transparent 90%)}
+h3{margin:3px 0 14px;font-size:20px;font-weight:600;line-height:1.45}.wrap>h3{padding-bottom:12px;border-bottom:1px solid var(--border);color:#103c60}
+.text-small{font-size:12px}.text-muted{color:var(--muted-foreground)}.tabular-nums{font-variant-numeric:tabular-nums}.text-end{text-align:right}.text-nowrap{white-space:nowrap}
+.table{width:100%;border-collapse:collapse;margin:5px 0 9px}.table-sm td,.table-sm th{padding:6px 9px;border-bottom:1px solid var(--border);text-align:left}.table-sm th{background:#f1f6fa;color:#35566e;font-weight:500}.table-sm tr:last-child td{border-bottom:0}.table-sm th.text-end,.table-sm td.text-end{text-align:right}
+.form-range{width:100%;accent-color:var(--primary);cursor:pointer}.form-select{padding:6px 30px 6px 10px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);font-family:inherit;font-size:14px;outline:none}.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,104,179,.12)}
+.form-check{display:inline-flex;align-items:center;gap:5px;cursor:pointer}.form-check-input{accent-color:var(--primary);width:15px;height:15px;margin:0}
+.btn{padding:7px 17px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);cursor:pointer;font-family:inherit;font-size:14px;transition:background .15s,border-color .15s,box-shadow .15s}.btn:hover{background:#edf5fa;border-color:#7ba9c5}.btn-primary{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary);box-shadow:0 2px 5px rgba(18,104,179,.16)}.btn-primary:hover{background:#0d599c;border-color:#0d599c}.btn:focus-visible{outline:3px solid rgba(24,169,199,.28);outline-offset:2px}.btn-primary:disabled{opacity:.55;cursor:default}
+input[type="number"],input[type="text"]{border:1px solid #bdcedb;border-radius:5px;padding:5px 8px;color:var(--foreground);font-family:inherit}input[type="number"]:focus,input[type="text"]:focus{outline:2px solid rgba(18,104,179,.15);border-color:var(--primary)}
+@media(max-width:640px){body{padding:0 8px 26px}.lab-header{margin:0 -8px}.lab-header-inner{padding:12px 14px}.lab-brand b{font-size:13px}.lab-brand small{font-size:8px;letter-spacing:1px}.lab-mark{width:32px;height:32px}.lab-return{padding:4px 8px}.wrap{padding:19px 15px 22px}.wrap>h3{font-size:18px}.lab-subhead{padding:0 7px}.table-sm td,.table-sm th{padding:5px}}
+</style>
+</head>
+<body>
+<header class="lab-header"><div class="lab-header-inner">
+  <div class="lab-brand"><span class="lab-mark"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13.2 2 5.8 13h5.6L10.8 22l7.4-11h-5.6L13.2 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><span><b>电力系统继电保护原理 · 虚拟仿真实验</b><small>RELAY PROTECTION VIRTUAL LAB</small></span></div>
+  <a class="lab-return" href="index.html">← 返回实验目录</a>
+</div></header>
+<div class="lab-subhead"><span>模块 01 · 电网电流保护</span> / 交互实验台</div>
+<main class="wrap"><div id="rcp-sim">
+<style>
+#rcp-sim .rcp-controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin:6px 0 12px}
+#rcp-sim .rcp-field{display:flex;flex-direction:column;gap:4px;flex:1 1 140px;min-width:130px}
+#rcp-sim .rcp-field>span{font-weight:500}
+#rcp-sim .rcp-grid{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+#rcp-sim .rcp-diagram{flex:3 1 400px;min-width:300px}
+#rcp-sim .rcp-result{flex:2 1 280px;min-width:260px}
+#rcp-sim .rcp-plabel{font-weight:500;margin:14px 0 6px}
+#rcp-sim .rcp-leg{display:flex;flex-wrap:wrap;gap:4px 16px;margin:4px 0}
+#rcp-sim .rcp-sw{display:inline-block;width:16px;border-top:2px solid var(--viz-series-1);margin-right:6px;vertical-align:middle}
+#rcp-sim .rcp-sw.c2{border-color:var(--viz-series-2)}
+#rcp-sim .rcp-sw.c3{border-color:var(--viz-series-3);border-top-style:dashed}
+#rcp-sim .rcp-sw.c4{border-color:var(--viz-series-4);border-top-style:dashed}
+#rcp-sim .rcp-sw.c5{border-color:var(--viz-series-5);border-top-style:dashed}
+#rcp-sim .rcp-sw.area{height:10px;border:none;background:var(--viz-series-1);opacity:.25;border-radius:2px;vertical-align:-1px}
+#rcp-sim .rcp-tl{display:none;align-items:center;gap:10px;margin-top:10px}
+#rcp-sim .rcp-track{flex:1;height:8px;background:var(--muted);border-radius:4px;overflow:hidden}
+#rcp-sim #rcp-tl-fill{height:100%;width:0;background:var(--viz-series-1)}
+#rcp-sim .rcp-metrics{margin-top:8px;display:flex;flex-direction:column;gap:2px}
+#rcp-sim .rcp-conc{margin-top:10px;font-weight:500}
+#rcp-sim .rcp-cap{color:var(--muted-foreground)}
+#rcp-sim svg{display:block;width:100%;height:auto}
+#rcp-sim .rcp-params{background:var(--muted);border-radius:8px;padding:8px 12px;margin:6px 0 12px}
+#rcp-sim .rcp-cases{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 10px}
+#rcp-sim .rcp-calc{margin-top:8px;display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--border);padding-top:8px}
+</style>
+
+<h3>单侧电源辐射网络 · 三段式电流保护交互仿真</h3>
+<div class="rcp-params text-small"><b>给定参数（供整定计算）：</b>线路额定电压 35 kV（短路计算取平均额定电压 37 kV），线路单位阻抗 z1 = 0.4 Ω/km；本线路 L1 = 50 km（QF1 处装保护1），下一级线路 L2 = 80 km（QF2 处装保护2）；系统等值阻抗：最大运行方式 Zs.min = 2 Ω，最小运行方式 Zs.max = 3 Ω。整定系数：Ⅰ段 Krel = 1.25；Ⅱ段 Krel = 1.15（与下一级Ⅰ段配合）；Ⅲ段 Krel = 1.2、自启动系数 Kss = 1.5、返回系数 Kre = 0.85；最大负荷电流用滑块调节。<br><b>已知动作时限：</b>下一级保护2的Ⅰ段 tⅠ,2 = 0.05 s、Ⅱ段 tⅡ,2 = 0.55 s、Ⅲ段 tⅢ,2 = 1.5 s，时限级差 Δt = 0.5 s；故保护1的 tⅡ,1 = tⅠ,2 + Δt = 0.55 s，tⅢ,1 = tⅢ,2 + Δt = 2.0 s。保护2Ⅱ段按能覆盖 L2 全线处理；时间均自故障发生起算，动画简化为保护出口与断路器分闸同步。</div>
+
+<div class="rcp-cases">
+  <span style="font-weight:500">典型案例：</span>
+  <select class="form-select" id="rcp-case">
+    <option value="">手动探索（自行调节参数）</option>
+    <option value="near3max">案例1：近端三相短路（最大方式）→ Ⅰ段瞬时动作</option>
+    <option value="far2min">案例2：远端两相短路（最小方式）→ Ⅱ段延时动作</option>
+    <option value="boundary">案例3：Ⅰ段保护范围边界校验</option>
+    <option value="heavyload">案例4：大负荷下Ⅲ段远后备灵敏度危机</option>
+    <option value="remotebackup">案例5：下一级线路故障、保护2拒动 → Ⅲ段远后备</option>
+  </select>
+  <span class="text-small" id="rcp-case-note" style="flex:1 1 260px"></span>
+</div>
+
+<div class="rcp-controls">
+  <label class="rcp-field"><span>故障位置 k：<span class="tabular-nums" id="rcp-lf-v">10 km</span></span>
+    <input type="range" class="form-range" id="rcp-lf" min="0" max="130" step="0.5" value="10"></label>
+  <label class="rcp-field"><span>故障类型</span>
+    <select class="form-select" id="rcp-type">
+      <option value="3ph" selected>三相短路</option>
+      <option value="2ph">两相短路</option>
+    </select></label>
+  <label class="rcp-field"><span>系统运行方式</span>
+    <select class="form-select" id="rcp-mode">
+      <option value="max" selected>最大运行方式</option>
+      <option value="min">最小运行方式</option>
+    </select></label>
+  <label class="rcp-field"><span>最大负荷电流：<span class="tabular-nums" id="rcp-il-v">120 A</span></span>
+    <input type="range" class="form-range" id="rcp-il" min="80" max="200" step="10" value="120"></label>
+  <label class="rcp-field"><span>下一级保护2状态（仅 L2 故障）</span>
+    <select class="form-select" id="rcp-down">
+      <option value="normal" selected>正常：保护2优先跳闸</option>
+      <option value="fail">拒动：保护1远后备</option>
+    </select></label>
+  <button type="button" class="btn btn-primary" id="rcp-run">模拟故障</button>
+</div>
+
+<div class="rcp-grid">
+  <div class="rcp-diagram">
+    <div class="rcp-plabel">一次系统接线与故障点</div>
+    <div id="rcp-diagram" role="img" aria-label="单侧电源辐射网络接线图，含两级线路与断路器"></div>
+    <div class="rcp-plabel">短路电流随故障位置变化与三段整定配合</div>
+    <div id="rcp-curve" role="img" aria-label="短路电流随故障位置变化的曲线及三段整定值"></div>
+    <div class="rcp-leg text-small">
+      <span><span class="rcp-sw"></span>最大方式·三相短路电流</span>
+      <span><span class="rcp-sw c2"></span>最小方式·两相短路电流</span>
+      <span><span class="rcp-sw c3"></span>Ⅰ段整定值</span>
+      <span><span class="rcp-sw c4"></span>Ⅱ段整定值</span>
+      <span><span class="rcp-sw c5"></span>Ⅲ段整定值</span>
+      <span><span class="rcp-sw area"></span>Ⅰ段最小保护范围</span>
+    </div>
+  </div>
+  <div class="rcp-result">
+    <div class="rcp-plabel">保护1（QF1）动作分析</div>
+    <div>故障电流 <span class="tabular-nums" id="rcp-ik-v" style="font-weight:500">3.56</span> kA <span class="rcp-cap text-small" id="rcp-ik-cap"></span></div>
+    <table class="table table-sm" style="margin-top:6px">
+      <thead><tr><th>保护段</th><th class="text-end text-nowrap">整定值</th><th class="text-end text-nowrap">时限</th><th class="text-nowrap">状态</th></tr></thead>
+      <tbody>
+        <tr><td>Ⅰ段 电流速断</td><td class="text-end tabular-nums text-nowrap" id="rcp-v1">—</td><td class="text-end tabular-nums text-nowrap">0.05 s</td><td class="text-nowrap" id="rcp-st1">—</td></tr>
+        <tr><td>Ⅱ段 限时速断</td><td class="text-end tabular-nums text-nowrap" id="rcp-v2">—</td><td class="text-end tabular-nums text-nowrap" id="rcp-t2">0.55 s</td><td class="text-nowrap" id="rcp-st2">—</td></tr>
+        <tr><td>Ⅲ段 定时限过电流</td><td class="text-end tabular-nums text-nowrap" id="rcp-v3">—</td><td class="text-end tabular-nums text-nowrap">2.0 s</td><td class="text-nowrap" id="rcp-st3">—</td></tr>
+      </tbody>
+    </table>
+    <div class="rcp-metrics text-small" id="rcp-metrics"></div>
+    <div class="rcp-calc text-small" id="rcp-calc"></div>
+    <div class="rcp-conc" id="rcp-conc" aria-live="polite">调整工况后，点击「模拟故障」观察各段启动与跳闸过程。</div>
+    <div class="rcp-tl" id="rcp-tl">
+      <div class="rcp-track"><div id="rcp-tl-fill"></div></div>
+      <span class="tabular-nums text-small" id="rcp-tl-t">t = 0.00 s</span>
+    </div>
+    <div id="rcp-wave" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<div class="rcp-plabel">阶梯时限特性（按各位置最快动作段绘制）</div>
+<div id="rcp-step" role="img" aria-label="保护1与保护2的阶梯时限特性"></div>
+<div class="rcp-leg text-small">
+  <span><span class="rcp-sw"></span>保护1（QF1，本线路）</span>
+  <span><span class="rcp-sw c2"></span>保护2（QF2，下一级线路）</span>
+</div>
+</div>
+<script>
+(function(){
+var E=37/Math.sqrt(3), z1=0.4, L1=50, L2=80, ZsMin=2, ZsMax=3;
+var KrelI=1.25, KrelII=1.15, KrelIII=1.2, Kss=1.5, Kre=0.85;
+var tI=0.05, tII=tI+0.5, dT=0.5, tIII2=1.5, tIII1=tIII2+dT;
+var XMAX=L1+L2, YMAX=11;
+function el(id){return document.getElementById(id);}
+var ui={lf:el('rcp-lf'),type:el('rcp-type'),mode:el('rcp-mode'),il:el('rcp-il'),down:el('rcp-down'),run:el('rcp-run')};
+var out={lfv:el('rcp-lf-v'),ilv:el('rcp-il-v'),ikv:el('rcp-ik-v'),cap:el('rcp-ik-cap'),
+  diagram:el('rcp-diagram'),curve:el('rcp-curve'),step:el('rcp-step'),
+  v1:el('rcp-v1'),v2:el('rcp-v2'),v3:el('rcp-v3'),
+  st1:el('rcp-st1'),st2:el('rcp-st2'),st3:el('rcp-st3'),
+  metrics:el('rcp-metrics'),conc:el('rcp-conc'),calc:el('rcp-calc'),
+  tl:el('rcp-tl'),tlf:el('rcp-tl-fill'),tlt:el('rcp-tl-t'),wave:el('rcp-wave')};
+var running=false;
+
+function ik(l,mode,type){
+  var Zs=mode==='max'?ZsMin:ZsMax;
+  var v=E/(Zs+z1*l);
+  return type==='2ph'?v*Math.sqrt(3)/2:v;
+}
+function compute(){
+  var lf=+ui.lf.value, type=ui.type.value, mode=ui.mode.value, ilA=+ui.il.value;
+  var Iset1=KrelI*ik(L1,'max','3ph');
+  var Iset1n=KrelI*ik(L1+L2,'max','3ph');
+  var Iset2=KrelII*Iset1n;
+  var Iset3=KrelIII*Kss/Kre*(ilA/1000);
+  var I=ik(lf,mode,type);
+  var stage=I>=Iset1?1:(I>=Iset2?2:(I>=Iset3?3:0));
+  var tripT=stage===1?tI:(stage===2?tII:(stage===3?tIII1:0));
+  var rangeI=Math.max(0,Math.min(L1,(E*Math.sqrt(3)/2/Iset1-ZsMax)/z1));
+  var ksen2=ik(L1,'min','2ph')/Iset2;
+  var ksen3n=ik(L1,'min','2ph')/Iset3;
+  var ksen3f=ik(L1+L2,'min','2ph')/Iset3;
+  var lA=(E/Iset1-ZsMin)/z1, lB=(E/Iset2-ZsMin)/z1, lC=(E/Iset3-ZsMin)/z1;
+  var lA2=(E/Iset1n-ZsMin)/z1;
+  var downstreamTrip=lf>L1&&ui.down.value==='normal';
+  var downstreamT=downstreamTrip?(I>=Iset1n?tI:tII):0;
+  return {lf:lf,type:type,mode:mode,ilA:ilA,down:ui.down.value,I:I,Iset1:Iset1,Iset2:Iset2,Iset3:Iset3,
+    stage:stage,tripT:tripT,downstreamTrip:downstreamTrip,downstreamT:downstreamT,endT:downstreamTrip?downstreamT:tripT,rangeI:rangeI,ksen2:ksen2,ksen3n:ksen3n,ksen3f:ksen3f,
+    lA:lA,lB:lB,lC:lC,lA2:lA2,Iset1n:Iset1n,ikL1:ik(L1,'max','3ph'),ikL2:ik(L1+L2,'max','3ph')};
+}
+
+function svgOpen(w,h,label){return '<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+label+'">';}
+
+function renderDiagram(C,tripped,downstreamTripped){
+  var y=70, xf=C.lf<=L1?170+(C.lf/L1)*(370-170):420+((C.lf-L1)/L2)*(560-420);
+  var blade1=tripped?'M140,'+y+' L156,54':'M140,'+y+' L160,'+y;
+  var qf1stroke=tripped?'var(--red)':'var(--foreground)';
+  var s=svgOpen(680,118,'单侧电源辐射网络接线图');
+  s+='<circle cx="34" cy="'+y+'" r="15" fill="none" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<text x="34" y="'+(y+4)+'" text-anchor="middle" font-size="14" fill="var(--foreground)">~</text>';
+  s+='<line x1="49" y1="'+y+'" x2="110" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<line x1="110" y1="52" x2="110" y2="88" stroke="var(--foreground)" stroke-width="4"/>';
+  s+='<text x="110" y="44" text-anchor="middle" font-size="12" fill="var(--foreground)">母线A</text>';
+  s+='<line x1="110" y1="'+y+'" x2="140" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<rect x="140" y="'+(y-10)+'" width="20" height="20" fill="none" stroke="'+qf1stroke+'" stroke-width="1.5"/>';
+  s+='<path d="'+blade1+'" stroke="'+qf1stroke+'" stroke-width="2.5" fill="none"/>';
+  s+='<text x="150" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">QF1·保护1</text>';
+  s+='<line x1="160" y1="'+y+'" x2="370" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<text x="265" y="104" text-anchor="middle" font-size="11" fill="var(--muted-foreground)">L1 = '+L1+' km</text>';
+  s+='<line x1="'+(xf-6)+'" y1="'+(y-6)+'" x2="'+(xf+6)+'" y2="'+(y+6)+'" stroke="var(--red)" stroke-width="2.5"/>';
+  s+='<line x1="'+(xf-6)+'" y1="'+(y+6)+'" x2="'+(xf+6)+'" y2="'+(y-6)+'" stroke="var(--red)" stroke-width="2.5"/>';
+  s+='<text x="'+(xf+11)+'" y="'+(y-9)+'" font-size="12" fill="var(--red)">k</text>';
+  s+='<line x1="370" y1="52" x2="370" y2="88" stroke="var(--foreground)" stroke-width="4"/>';
+  s+='<text x="370" y="44" text-anchor="middle" font-size="12" fill="var(--foreground)">母线B</text>';
+  s+='<line x1="370" y1="'+y+'" x2="400" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  var qf2=downstreamTripped?'var(--red)':'var(--foreground)';
+  var blade2=downstreamTripped?'M400,'+y+' L416,54':'M400,'+y+' L420,'+y;
+  s+='<rect x="400" y="'+(y-10)+'" width="20" height="20" fill="none" stroke="'+qf2+'" stroke-width="1.5"/>';
+  s+='<path d="'+blade2+'" stroke="'+qf2+'" stroke-width="2.5" fill="none"/>';
+  s+='<text x="410" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">QF2·保护2</text>';
+  if(C.down==='fail'&&C.lf>L1)s+='<text x="410" y="44" text-anchor="middle" font-size="12" fill="var(--red)">拒动</text>';
+  s+='<line x1="420" y1="'+y+'" x2="560" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<text x="495" y="104" text-anchor="middle" font-size="11" fill="var(--muted-foreground)">L2 = '+L2+' km</text>';
+  s+='<line x1="560" y1="'+y+'" x2="596" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<polygon points="596,'+y+' 586,'+(y-5)+' 586,'+(y+5)+'" fill="var(--foreground)"/>';
+  s+='<text x="606" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">负荷</text>';
+  s+='<text x="34" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">等值系统</text>';
+
+  s+='</svg>';
+  out.diagram.innerHTML=s;
+}
+
+function renderCurve(C){
+  var W=680,H=300,ml=48,mr=12,mt=12,mb=34;
+  function px(l){return ml+l/XMAX*(W-ml-mr);}
+  function py(v){return mt+(1-Math.min(v,YMAX)/YMAX)*(H-mt-mb);}
+  function pathFor(mode,type){
+    var d='';
+    for(var i=0;i<=260;i++){var l=i*0.5;var v=ik(l,mode,type);
+      d+=(i?'L':'M')+px(l).toFixed(1)+','+py(v).toFixed(1);}
+    return d;
+  }
+  var s=svgOpen(W,H,'短路电流随故障位置变化曲线及三段整定值');
+  var yt=[0,2,4,6,8,10], i;
+  for(i=0;i<yt.length;i++){
+    s+='<line x1="'+ml+'" y1="'+py(yt[i])+'" x2="'+(W-mr)+'" y2="'+py(yt[i])+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+(ml-6)+'" y="'+(py(yt[i])+4)+'" text-anchor="end" font-size="12" fill="var(--muted-foreground)">'+yt[i]+'</text>';
+  }
+  var xt=[0,25,50,75,100,125];
+  for(i=0;i<xt.length;i++){
+    s+='<text x="'+px(xt[i])+'" y="'+(H-mb+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">'+xt[i]+'</text>';
+  }
+  s+='<text x="14" y="'+((mt+H-mb)/2)+'" transform="rotate(-90 14 '+((mt+H-mb)/2)+')" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">短路电流 (kA)</text>';
+  s+='<text x="'+((ml+W-mr)/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">故障点距保护1安装处 (km)</text>';
+  s+='<line x1="'+px(L1)+'" y1="'+mt+'" x2="'+px(L1)+'" y2="'+(H-mb)+'" stroke="var(--foreground)" stroke-opacity="0.35" stroke-dasharray="4 3"/>';
+  s+='<text x="'+(px(L1)+5)+'" y="'+(mt+12)+'" font-size="12" fill="var(--muted-foreground)">母线B</text>';
+  s+='<rect x="'+px(0)+'" y="'+mt+'" width="'+(px(C.rangeI)-px(0))+'" height="'+(H-mb-mt)+'" fill="var(--viz-series-1)" opacity="0.12"/>';
+  s+='<text x="'+px(C.rangeI/2)+'" y="'+(mt+14)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">Ⅰ段最小保护范围</text>';
+  s+='<path d="'+pathFor('max','3ph')+'" fill="none" stroke="var(--viz-series-1)" stroke-width="2.5"/>';
+  s+='<path d="'+pathFor('min','2ph')+'" fill="none" stroke="var(--viz-series-2)" stroke-width="2.5"/>';
+  var lines=[[C.Iset1,'var(--viz-series-3)','Ⅰ段整定 '+C.Iset1.toFixed(2)+' kA',3],
+             [C.Iset2,'var(--viz-series-4)','Ⅱ段整定 '+C.Iset2.toFixed(2)+' kA',100],
+             [C.Iset3,'var(--viz-series-5)','Ⅲ段整定 '+C.Iset3.toFixed(2)+' kA',14]];
+  for(i=0;i<lines.length;i++){
+    var lv=lines[i];
+    s+='<line x1="'+ml+'" y1="'+py(lv[0])+'" x2="'+(W-mr)+'" y2="'+py(lv[0])+'" stroke="'+lv[1]+'" stroke-width="1.8" stroke-dasharray="6 4"/>';
+    s+='<text x="'+px(lv[3])+'" y="'+(py(lv[0])-5)+'" font-size="12" fill="var(--foreground)">'+lv[2]+'</text>';
+  }
+  var fy=py(C.I), ly=Math.max(fy-10,mt+10);
+  s+='<line x1="'+px(C.lf)+'" y1="'+mt+'" x2="'+px(C.lf)+'" y2="'+(H-mb)+'" stroke="var(--foreground)" stroke-opacity="0.5" stroke-dasharray="3 3"/>';
+  s+='<circle cx="'+px(C.lf)+'" cy="'+fy+'" r="4.5" fill="var(--primary)"><title>当前故障点 '+C.lf+' km，故障电流 '+C.I.toFixed(2)+' kA</title></circle>';
+  s+='<text x="'+px(C.lf)+'" y="'+ly+'" text-anchor="middle" font-size="12" fill="var(--foreground)">'+C.I.toFixed(2)+' kA</text>';
+  s+='</svg>';
+  out.curve.innerHTML=s;
+}
+
+function renderStep(C){
+  var W=680,H=230,ml=48,mr=12,mt=12,mb=34,TMAX=2.4;
+  function px(l){return ml+l/XMAX*(W-ml-mr);}
+  function sy(t){return mt+(1-t/TMAX)*(H-mt-mb);}
+  function keep(arr){
+    var r=[];
+    arr.forEach(function(g){var x0=g[0],x1=Math.min(XMAX,g[1]);if(x1>x0+0.3)r.push([x0,x1,g[2]]);});
+    return r;
+  }
+  function draw(arr,color){
+    var d='',c='';
+    arr.forEach(function(g,i){
+      d+='M'+px(g[0]).toFixed(1)+','+sy(g[2]).toFixed(1)+'L'+px(g[1]).toFixed(1)+','+sy(g[2]).toFixed(1);
+      if(i>0)c+='M'+px(g[0]).toFixed(1)+','+sy(arr[i-1][2]).toFixed(1)+'L'+px(g[0]).toFixed(1)+','+sy(g[2]).toFixed(1);
+    });
+    return '<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2.5"/>'+
+           '<path d="'+c+'" fill="none" stroke="'+color+'" stroke-width="1.2" stroke-opacity="0.6"/>';
+  }
+  var p1=keep([[0,C.lA,tI],[C.lA,C.lB,tII],[C.lB,C.lC,tIII1]]);
+  var p2=keep([[L1,C.lA2,tI],[C.lA2,XMAX+40,tII]]);
+  var s=svgOpen(W,H,'保护1与保护2的阶梯时限特性');
+  var yt=[0,0.5,1,1.5,2], i;
+  for(i=0;i<yt.length;i++){
+    s+='<line x1="'+ml+'" y1="'+sy(yt[i])+'" x2="'+(W-mr)+'" y2="'+sy(yt[i])+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+(ml-6)+'" y="'+(sy(yt[i])+4)+'" text-anchor="end" font-size="12" fill="var(--muted-foreground)">'+yt[i].toFixed(1)+'</text>';
+  }
+  var xt=[0,25,50,75,100,125];
+  for(i=0;i<xt.length;i++){
+    s+='<text x="'+px(xt[i])+'" y="'+(H-mb+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">'+xt[i]+'</text>';
+  }
+  s+='<text x="14" y="'+((mt+H-mb)/2)+'" transform="rotate(-90 14 '+((mt+H-mb)/2)+')" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">动作时间 (s)</text>';
+  s+='<text x="'+((ml+W-mr)/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">故障点位置 (km)</text>';
+  s+='<line x1="'+px(L1)+'" y1="'+mt+'" x2="'+px(L1)+'" y2="'+(H-mb)+'" stroke="var(--foreground)" stroke-opacity="0.35" stroke-dasharray="4 3"/>';
+  s+='<text x="'+(px(L1)+5)+'" y="'+(mt+12)+'" font-size="12" fill="var(--muted-foreground)">母线B</text>';
+  s+=draw(p1,'var(--viz-series-1)');
+  s+=draw(p2,'var(--viz-series-2)');
+  s+='<rect x="'+(px(0)-3)+'" y="'+(H-mb-3)+'" width="6" height="6" fill="var(--viz-series-1)"/>';
+  s+='<rect x="'+(px(L1)-3)+'" y="'+(H-mb-3)+'" width="6" height="6" fill="var(--viz-series-2)"/>';
+  if(p1.length>0)s+='<text x="'+px(p1[0][1]/2)+'" y="'+(sy(tI)-7)+'" text-anchor="middle" font-size="12" fill="var(--foreground)">Ⅰ段 0.05 s</text>';
+  if(p1.length>1)s+='<text x="'+px((p1[1][0]+p1[1][1])/2)+'" y="'+(sy(tII)-7)+'" text-anchor="middle" font-size="12" fill="var(--foreground)">Ⅱ段 0.55 s</text>';
+  if(p1.length>2)s+='<text x="'+px((p1[2][0]+p1[2][1])/2)+'" y="'+(sy(tIII1)-7)+'" text-anchor="middle" font-size="12" fill="var(--foreground)">Ⅲ段 2.0 s</text>';
+  if(p2.length>0)s+='<text x="'+px((p2[0][0]+p2[0][1])/2)+'" y="'+(sy(tI)-7)+'" text-anchor="middle" font-size="12" fill="var(--foreground)">Ⅰ段 0.05 s</text>';
+  if(p2.length>1)s+='<text x="'+px((p2[1][0]+p2[1][1])/2)+'" y="'+(sy(tII)-7)+'" text-anchor="middle" font-size="12" fill="var(--foreground)">Ⅱ段 0.55 s</text>';
+  s+='</svg>';
+  out.step.innerHTML=s;
+}
+
+function verdict(v,req){
+  var ok=v>=req;
+  return '<span style="color:'+(ok?'var(--green)':'var(--red)')+'">'+v.toFixed(2)+'（要求 ≥ '+req+'，'+(ok?'合格':'不合格')+'）</span>';
+}
+function renderResult(C){
+  var tname=C.type==='3ph'?'三相短路':'两相短路';
+  var mname=C.mode==='max'?'最大方式':'最小方式';
+  out.ikv.textContent=C.I.toFixed(2);
+  out.cap.textContent=tname+' · '+mname+(C.lf<=L1?' · 本线路 k 点距 QF1 '+C.lf+' km':' · L2 距母线B '+(C.lf-L1)+' km · 保护2'+(C.down==='fail'?'拒动':'正常'));
+  out.v1.textContent=C.Iset1.toFixed(2)+' kA';
+  out.v2.textContent=C.Iset2.toFixed(2)+' kA';
+  out.v3.textContent=C.Iset3.toFixed(2)+' kA';
+  out.metrics.innerHTML=
+    '<div>Ⅰ段最小保护范围（最小方式·两相短路）：'+C.rangeI.toFixed(1)+' km，占全线 '+(100*C.rangeI/L1).toFixed(0)+'%</div>'+
+    '<div>Ⅱ段灵敏度 Ksen：'+verdict(C.ksen2,1.3)+'</div>'+
+    '<div>Ⅲ段灵敏度：近后备 '+verdict(C.ksen3n,1.3)+'；远后备 '+verdict(C.ksen3f,1.2)+'</div>';
+  out.calc.innerHTML='<div><b>整定计算过程（与手算对照）：</b></div>'+
+    '<div>Ⅰ段：Iset1 = Krel × Ik.max（本线路末端三相）= 1.25 × '+C.ikL1.toFixed(2)+' = <b>'+C.Iset1.toFixed(2)+' kA</b></div>'+
+    '<div>Ⅱ段：Iset2 = Krel × Iset1（保护2）= 1.15 ×（1.25 × '+C.ikL2.toFixed(2)+'）= 1.15 × '+C.Iset1n.toFixed(2)+' = <b>'+C.Iset2.toFixed(2)+' kA</b></div>'+
+    '<div>Ⅲ段：Iset3 = (Krel·Kss/Kre) × IL.max = (1.2×1.5/0.85) × '+(C.ilA/1000).toFixed(2)+' = <b>'+C.Iset3.toFixed(2)+' kA</b></div>'+
+    '<div>时限：tⅡ,1 = 0.05 + 0.5 = <b>0.55 s</b>；tⅢ,1 = 1.5 + 0.5 = <b>2.0 s</b>（Δt = 0.5 s）</div>';
+}
+function resetStages(){
+  [out.st1,out.st2,out.st3].forEach(function(st){st.textContent='—';st.style.color='var(--muted-foreground)';});
+}
+function refresh(){
+  var C=compute();
+  out.lfv.textContent=C.lf+' km';
+  out.ilv.textContent=C.ilA+' A';
+  renderDiagram(C,false);
+  renderCurve(C);
+  renderStep(C);
+  renderResult(C);
+  resetStages();
+  out.tl.style.display='none';
+  out.wave.innerHTML='';
+  out.conc.style.color='var(--muted-foreground)';
+  out.conc.textContent='调整工况后，点击「模拟故障」观察各段启动与跳闸过程。';
+}
+
+function updateStages(C,t){
+  var sets=[C.Iset1,C.Iset2,C.Iset3];
+  var sts=[out.st1,out.st2,out.st3];
+  for(var j=0;j<3;j++){
+    var picked=C.I>=sets[j]-1e-9, txt, col;
+    if(!picked){txt='未启动';col='var(--muted-foreground)';}
+    else if(C.downstreamTrip){txt=t<C.downstreamT?'启动':'返回';col=t<C.downstreamT?'var(--orange)':'var(--muted-foreground)';}
+    else if(C.stage===0||t<C.tripT){txt='启动';col='var(--orange)';}
+    else if(C.stage===j+1){txt='跳闸';col='var(--red)';}
+    else{txt='返回';col='var(--muted-foreground)';}
+    sts[j].textContent=txt;sts[j].style.color=col;
+  }
+}
+function conclusion(C){
+  if(C.downstreamTrip)return '故障位于下一级线路 L2，保护2在 '+C.downstreamT.toFixed(2)+' s 优先跳闸；保护1已启动的各段随后返回，不越级动作。将保护2改为拒动，可观察保护1远后备。';
+  if(C.stage===1)return 'Ⅰ段（电流速断）动作：故障位于Ⅰ段保护范围内，约 0.05 s 瞬时跳闸；Ⅱ、Ⅲ段启动后返回。';
+  if(C.stage===2)return 'Ⅱ段（限时速断）动作：故障超出Ⅰ段范围，Ⅰ段未启动；Ⅱ段在故障后 0.55 s 出口跳闸，Ⅲ段启动后返回。';
+  if(C.stage===3)return 'Ⅲ段（定时限过电流）动作：Ⅰ、Ⅱ段未启动，Ⅲ段在故障后 2.0 s 出口跳闸'+(C.lf>L1?'（保护2拒动，保护1承担远后备）':'（后备保护作用）')+'。';
+  return '各段均未启动：故障电流低于Ⅲ段整定值，保护拒动，需检查整定计算。';
+}
+function renderOsc(C,t){
+  var W=340,H=130,ml=30,mr=8,mt=10,mb=22, clearT=C.endT;
+  var T0=-0.15, T1=(C.stage||C.downstreamTrip)?clearT+0.4:2.3;
+  function px(v){return ml+(v-T0)/(T1-T0)*(W-ml-mr);}
+  function py(v){return mt+(1-v)/2*(H-mt-mb)*0.5+ (1-v)/2*(H-mt-mb)*0.5;}
+  var mid=(mt+H-mb)/2, amp=(H-mb-mt)/2-6;
+  function pyv(v){return mid-v*amp;}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="故障电流录波图">';
+  s+='<line x1="'+ml+'" y1="'+mid+'" x2="'+(W-mr)+'" y2="'+mid+'" stroke="var(--border)" stroke-width="1"/>';
+  s+='<line x1="'+px(0)+'" y1="'+mt+'" x2="'+px(0)+'" y2="'+(H-mb)+'" stroke="var(--red)" stroke-width="1" stroke-dasharray="3 3"/>';
+  s+='<text x="'+(px(0)+3)+'" y="'+(mt+9)+'" font-size="10" fill="var(--red)">故障</text>';
+  if(C.stage||C.downstreamTrip){
+    s+='<line x1="'+px(clearT)+'" y1="'+mt+'" x2="'+px(clearT)+'" y2="'+(H-mb)+'" stroke="var(--green)" stroke-width="1" stroke-dasharray="3 3"/>';
+    s+='<text x="'+(px(clearT)+3)+'" y="'+(H-mb-3)+'" font-size="10" fill="var(--green)">'+(C.downstreamTrip?'QF2跳闸':'QF1跳闸')+'</text>';
+  }
+  s+='<text x="'+(ml-4)+'" y="'+(mt+8)+'" text-anchor="end" font-size="10" fill="var(--muted-foreground)">i</text>';
+  s+='<text x="'+(W-mr)+'" y="'+(H-4)+'" text-anchor="end" font-size="10" fill="var(--muted-foreground)">t</text>';
+  var d='', n=420, i;
+  for(i=0;i<=n;i++){
+    var v=T0+(T1-T0)*i/n;
+    if(v>t)break;
+    var cur;
+    if(v<0){cur=0.06*Math.sin(2*Math.PI*50*v);}
+    else if((C.stage||C.downstreamTrip)&&v>=clearT){cur=0;}
+    else{cur=0.92*Math.sin(2*Math.PI*50*v);}
+    d+=(i===0?'M':'L')+px(v).toFixed(1)+','+pyv(cur).toFixed(1);
+  }
+  s+='<path d="'+d+'" fill="none" stroke="var(--viz-series-1)" stroke-width="1.4"/>';
+  s+='</svg>';
+  out.wave.innerHTML=s;
+}
+
+function runSim(){
+  if(running)return;
+  running=true;ui.run.disabled=true;
+  var C=compute();
+  renderDiagram(C,false);renderResult(C);resetStages();
+  out.conc.style.color='var(--foreground)';out.conc.textContent='故障发生，保护启动判断中……';
+  out.tl.style.display='flex';
+  var total=C.downstreamTrip?C.downstreamT:(C.stage?C.tripT:2.3);
+  var playback=Math.max(0.6,total);
+  var tripped=false;
+  function finish(){
+    updateStages(C,C.endT);
+    out.conc.textContent=conclusion(C);
+    out.conc.style.color=(C.stage||C.downstreamTrip)?'var(--foreground)':'var(--red)';
+    running=false;ui.run.disabled=false;
+  }
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){
+    out.tlf.style.width='100%';out.tlt.textContent='t = '+total.toFixed(2)+' s';
+    renderOsc(C,total);
+    if(C.downstreamTrip)renderDiagram(C,false,true);
+    else if(C.stage)renderDiagram(C,true,false);
+    finish();return;
+  }
+  var start=null;
+  function frame(ts){
+    if(start===null)start=ts;
+    var t=Math.min((ts-start)/(playback*1000)*total,total);
+    out.tlf.style.width=Math.min(t/total,1)*100+'%';
+    out.tlt.textContent='t = '+t.toFixed(2)+' s';
+    updateStages(C,t);
+    renderOsc(C,t);
+    if(C.downstreamTrip&&t>=C.downstreamT&&!tripped){tripped=true;renderDiagram(C,false,true);}
+    else if(!C.downstreamTrip&&C.stage&&t>=C.tripT&&!tripped){tripped=true;renderDiagram(C,true,false);}
+    if(t<total){requestAnimationFrame(frame);}else{finish();}
+  }
+  requestAnimationFrame(frame);
+}
+
+['lf','type','mode','il','down'].forEach(function(k){
+  ui[k].addEventListener('input',refresh);
+  ui[k].addEventListener('change',refresh);
+});
+var CASES={
+  near3max:{v:{lf:5,type:'3ph',mode:'max',il:120,down:'normal'},note:'观察要点：近端三相短路电流远大于Ⅰ段整定值，Ⅰ段瞬时跳闸，Ⅱ、Ⅲ段启动后返回。思考：改为两相短路后动作行为有何变化？'},
+  far2min:{v:{lf:45,type:'2ph',mode:'min',il:120,down:'normal'},note:'观察要点：最小方式两相短路已超出Ⅰ段最小保护范围（30.6 km），Ⅰ段未启动，Ⅱ段在故障后 0.55 s 出口跳闸。思考：为什么整定校验必须用“最小方式·两相短路”？'},
+  boundary:{v:{lf:31,type:'2ph',mode:'min',il:120,down:'normal'},note:'观察要点：故障位置 31 km 恰在Ⅰ段最小保护范围（30.6 km）之外一点点，Ⅰ段拒动、Ⅱ段动作。再把故障位置调回 30 km 对比，体会“保护范围”的含义。'},
+  heavyload:{v:{lf:48,type:'2ph',mode:'min',il:200,down:'normal'},note:'观察要点：负荷电流增大使Ⅲ段整定值抬高，远后备灵敏度降到 1.2 以下（不合格）。思考：为什么远后备灵敏度会随负荷增大而恶化？应如何改进整定？'},
+  remotebackup:{v:{lf:125,type:'2ph',mode:'min',il:120,down:'fail'},note:'观察要点：L2 远端故障且保护2拒动，保护1Ⅰ、Ⅱ段不启动，Ⅲ段在 2.0 s 远后备跳闸。再把保护2改为正常，对比保护2Ⅱ段 0.55 s 优先跳闸与保护1返回。'}
+};
+var caseEl=el('rcp-case'), caseNote=el('rcp-case-note');
+caseEl.addEventListener('change',function(){
+  var v=caseEl.value;
+  if(!v){caseNote.textContent='';return;}
+  var P=CASES[v];
+  ui.lf.value=P.v.lf; ui.type.value=P.v.type; ui.mode.value=P.v.mode; ui.il.value=P.v.il; ui.down.value=P.v.down;
+  caseNote.textContent=P.note;
+  refresh();
+  runSim();
+});
+ui.run.addEventListener('click',runSim);
+refresh();
+})();
+</script>
+
+</main>
+</body>
+</html>

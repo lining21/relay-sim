@@ -1,0 +1,292 @@
+﻿<!doctype>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08243f">
+<title>励磁涌流与二次谐波制动 · 电力系统继电保护原理虚拟仿真</title>
+<style>
+:root{--background:#f2f6fa;--foreground:#172b3f;--card:#fff;--card-foreground:#172b3f;--muted:#edf3f7;--muted-foreground:#587086;--primary:#1268b3;--primary-foreground:#fff;--border:#d9e4ed;--red:#c43b35;--green:#168566;--orange:#d37916;--accent:#e8f3fa;--accent-foreground:#172b3f;--viz-series-1:#1268b3;--viz-series-2:#e18a23;--viz-series-3:#168566;--viz-series-4:#8555b5;--viz-series-5:#d44b45;--viz-series-6:#168a9e}
+*{box-sizing:border-box}
+body{margin:0;padding:0 16px 42px;background:var(--background);color:var(--foreground);font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.65}
+.lab-header{margin:0 -16px;background:linear-gradient(112deg,#071d35,#0a3556 65%,#0c526c);color:#fff;border-bottom:2px solid #20a9c4;box-shadow:0 4px 16px rgba(8,38,62,.14)}
+.lab-header-inner{max-width:1080px;margin:auto;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lab-brand{display:flex;align-items:center;gap:11px}.lab-mark{width:37px;height:37px;display:grid;place-items:center;border:1px solid rgba(105,216,235,.45);border-radius:8px;color:#70d8e9;background:rgba(40,181,205,.09)}
+.lab-brand b{display:block;font-size:15px;letter-spacing:.5px;font-weight:600}.lab-brand small{display:block;color:#92b6cb;font-size:9px;letter-spacing:1.6px;line-height:1.4}.lab-return{color:#d4e8f3;font-size:12px;text-decoration:none;border:1px solid rgba(180,215,230,.3);border-radius:6px;padding:5px 11px;white-space:nowrap;transition:.15s}.lab-return:hover{background:rgba(255,255,255,.1);border-color:#71d2e4}
+.lab-subhead{max-width:1080px;margin:18px auto 0;padding:0 4px;display:flex;align-items:center;gap:9px;color:#58738a;font-size:12px}.lab-subhead:before{content:"";width:18px;height:2px;background:#18a9c7}.lab-subhead span{color:#1268b3;letter-spacing:.6px}
+.wrap{max-width:1080px;margin:8px auto 0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:23px 28px 27px;box-shadow:0 7px 24px rgba(21,63,92,.06);position:relative;overflow:hidden}
+.wrap:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#1268b3,#18a9c7 45%,transparent 90%)}
+h3{margin:3px 0 14px;font-size:20px;font-weight:600;line-height:1.45}.wrap>h3{padding-bottom:12px;border-bottom:1px solid var(--border);color:#103c60}
+.text-small{font-size:12px}.text-muted{color:var(--muted-foreground)}.tabular-nums{font-variant-numeric:tabular-nums}.text-end{text-align:right}.text-nowrap{white-space:nowrap}
+.table{width:100%;border-collapse:collapse;margin:5px 0 9px}.table-sm td,.table-sm th{padding:6px 9px;border-bottom:1px solid var(--border);text-align:left}.table-sm th{background:#f1f6fa;color:#35566e;font-weight:500}.table-sm tr:last-child td{border-bottom:0}.table-sm th.text-end,.table-sm td.text-end{text-align:right}
+.form-range{width:100%;accent-color:var(--primary);cursor:pointer}.form-select{padding:6px 30px 6px 10px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);font-family:inherit;font-size:14px;outline:none}.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,104,179,.12)}
+.form-check{display:inline-flex;align-items:center;gap:5px;cursor:pointer}.form-check-input{accent-color:var(--primary);width:15px;height:15px;margin:0}
+.btn{padding:7px 17px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);cursor:pointer;font-family:inherit;font-size:14px;transition:background .15s,border-color .15s,box-shadow .15s}.btn:hover{background:#edf5fa;border-color:#7ba9c5}.btn-primary{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary);box-shadow:0 2px 5px rgba(18,104,179,.16)}.btn-primary:hover{background:#0d599c;border-color:#0d599c}.btn:focus-visible{outline:3px solid rgba(24,169,199,.28);outline-offset:2px}.btn-primary:disabled{opacity:.55;cursor:default}
+input[type="number"],input[type="text"]{border:1px solid #bdcedb;border-radius:5px;padding:5px 8px;color:var(--foreground);font-family:inherit}input[type="number"]:focus,input[type="text"]:focus{outline:2px solid rgba(18,104,179,.15);border-color:var(--primary)}
+@media(max-width:640px){body{padding:0 8px 26px}.lab-header{margin:0 -8px}.lab-header-inner{padding:12px 14px}.lab-brand b{font-size:13px}.lab-brand small{font-size:8px;letter-spacing:1px}.lab-mark{width:32px;height:32px}.lab-return{padding:4px 8px}.wrap{padding:19px 15px 22px}.wrap>h3{font-size:18px}.lab-subhead{padding:0 7px}.table-sm td,.table-sm th{padding:5px}}
+</style>
+</head>
+<body>
+<header class="lab-header"><div class="lab-header-inner">
+  <div class="lab-brand"><span class="lab-mark"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13.2 2 5.8 13h5.6L10.8 22l7.4-11h-5.6L13.2 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><span><b>电力系统继电保护原理 · 虚拟仿真实验</b><small>RELAY PROTECTION VIRTUAL LAB</small></span></div>
+  <a class="lab-return" href="index.html">← 返回实验目录</a>
+</div></header>
+<div class="lab-subhead"><span>模块 04 · 变压器励磁涌流</span> / 交互实验台</div>
+<main class="wrap"><div id="ihs-sim">
+<style>
+#ihs-sim .ihs-controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin:6px 0 12px}
+#ihs-sim .ihs-field{display:flex;flex-direction:column;gap:4px;flex:1 1 170px;min-width:160px}
+#ihs-sim .ihs-field>span{font-weight:500}
+#ihs-sim .ihs-plabel{font-weight:500;margin:10px 0 6px}
+#ihs-sim .ihs-conc{margin-top:10px;font-weight:500}
+#ihs-sim .ihs-metrics{margin-top:6px;display:flex;flex-direction:column;gap:2px}
+#ihs-sim .ihs-params{background:var(--muted);border-radius:8px;padding:8px 12px;margin:6px 0 12px}
+#ihs-sim svg{display:block;width:100%;height:auto}
+</style>
+
+<h3>变压器空载合闸励磁涌流 · 二次谐波制动原理</h3>
+
+<div class="ihs-params text-small"><b>给定参数（供分析计算）：</b>涌流教学模型 i = 8cosα·e^(−t/τ)·max(0, sinωt − 0.35) + 0.06sinωt（标幺值），其中 α = 0° 为最不利合闸角，峰值约 5 × Ie；饱和脉冲分量每周期导通角约 139°，τ = 50 ms，另含 0.06 × Ie 正弦励磁分量。内部短路电流取 4sinωt + 3e^(−t/τ)。录波窗 5 个周波（100 ms）、512 点采样，DFT 计算 1~5 次谐波；二次谐波制动门槛取 15%。本模型用于展示波形与频谱特征，不替代具体铁磁暂态计算。</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 10px">
+  <span style="font-weight:500">典型案例：</span>
+  <select class="form-select" id="ihs-case">
+    <option value="">手动探索（自行调节参数）</option>
+    <option value="worst">案例1：最不利合闸角（α = 0°）涌流</option>
+    <option value="good">案例2：有利合闸角（α = 75°）涌流减小</option>
+    <option value="fault">案例3：内部短路电流对比</option>
+  </select>
+  <span class="text-small" id="ihs-case-note" style="flex:1 1 260px"></span>
+</div>
+
+<div class="ihs-controls">
+  <label class="ihs-field"><span>电流波形</span>
+    <select class="form-select" id="ihs-type">
+      <option value="inrush" selected>励磁涌流（空载合闸）</option>
+      <option value="fault">内部短路电流</option>
+    </select></label>
+  <label class="ihs-field"><span>合闸角 α：<span class="tabular-nums" id="ihs-a-v">0°</span>（涌流幅值随之变化）</span>
+    <input type="range" class="form-range" id="ihs-a" min="0" max="90" step="5" value="0"></label>
+  <button type="button" class="btn btn-primary" id="ihs-run">模拟录波与判别</button>
+</div>
+
+<div class="ihs-plabel">一次接线示意</div>
+<div id="ihs-diagram" role="img" aria-label="变压器空载合闸接线示意图"></div>
+<div class="ihs-plabel">电流波形（标幺值，5 个周波）</div>
+<div id="ihs-wave" role="img" aria-label="电流波形图"></div>
+
+<div class="ihs-plabel">谐波含量分析（占基波百分比，DFT 实时计算）</div>
+<div id="ihs-harm" role="img" aria-label="各次谐波含量柱状图"></div>
+
+<div class="ihs-metrics text-small" id="ihs-metrics"></div>
+<div class="ihs-conc" id="ihs-conc" aria-live="polite">—</div>
+</div>
+<script>
+(function(){
+var N=512, CYC=5, FS=N/CYC*50;
+var TAU=0.05, SAT=0.35;
+function el(id){return document.getElementById(id);}
+var ui={type:el('ihs-type'),a:el('ihs-a'),run:el('ihs-run')};
+var out={av:el('ihs-a-v'),wave:el('ihs-wave'),harm:el('ihs-harm'),metrics:el('ihs-metrics'),conc:el('ihs-conc'),diagram:el('ihs-diagram')};
+var running=false;
+
+function renderDiagram(type){
+  var y=64;
+  var s='<svg viewBox="0 0 680 130" role="img" aria-label="变压器空载合闸示意图">';
+  s+='<circle cx="34" cy="'+y+'" r="14" fill="none" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<text x="34" y="'+(y+4)+'" text-anchor="middle" font-size="13" fill="var(--foreground)">~</text>';
+  s+='<text x="34" y="112" text-anchor="middle" font-size="12" fill="var(--foreground)">系统</text>';
+  s+='<line x1="48" y1="'+y+'" x2="120" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<rect x="120" y="'+(y-10)+'" width="20" height="20" fill="none" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<path d="M120,'+y+' L140,'+y+'" stroke="var(--foreground)" stroke-width="2.5" fill="none"/>';
+  s+='<text x="130" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">QF（合闸）</text>';
+  s+='<line x1="140" y1="'+y+'" x2="256" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<circle cx="180" cy="'+y+'" r="9" fill="var(--card)" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<text x="180" y="112" text-anchor="middle" font-size="12" fill="var(--foreground)">CT（录波）</text>';
+  s+='<circle cx="278" cy="'+y+'" r="23" fill="none" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<circle cx="302" cy="'+y+'" r="23" fill="none" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<text x="290" y="112" text-anchor="middle" font-size="12" fill="var(--foreground)">变压器（空载）</text>';
+  s+='<line x1="325" y1="'+y+'" x2="430" y2="'+y+'" stroke="var(--foreground)" stroke-width="2" stroke-dasharray="4 3"/>';
+  s+='<text x="452" y="'+(y+4)+'" font-size="12" fill="var(--muted-foreground)">二次侧开路</text>';
+  if(type==='inrush'){
+    s+='<polygon points="130,18 122,36 129,36 124,52 140,32 132,32 138,18" fill="var(--orange)"/>';
+    s+='<text x="150" y="32" font-size="12" fill="var(--orange)">空载合闸，产生励磁涌流</text>';
+  }else{
+    s+='<line x1="284" y1="'+(y-7)+'" x2="296" y2="'+(y+7)+'" stroke="var(--red)" stroke-width="2.5"/>';
+    s+='<line x1="284" y1="'+(y+7)+'" x2="296" y2="'+(y-7)+'" stroke="var(--red)" stroke-width="2.5"/>';
+    s+='<text x="312" y="'+(y-12)+'" font-size="12" fill="var(--red)">k（内部故障）</text>';
+  }
+  s+='</svg>';
+  out.diagram.innerHTML=s;
+}
+
+function samples(type,alphaDeg){
+  var arr=[], i, t, th;
+  var amp=8*Math.cos(alphaDeg*Math.PI/180);
+  for(i=0;i<N;i++){
+    t=i/FS; th=2*Math.PI*50*t;
+    if(type==='inrush'){
+      var v=Math.sin(th)-SAT;
+      arr.push(amp*Math.exp(-t/TAU)*(v>0?v:0)+0.06*Math.sin(th));
+    }else{
+      arr.push(4*Math.sin(th)+3*Math.exp(-t/TAU));
+    }
+  }
+  return arr;
+}
+function harmonics(x){
+  var res=[], h;
+  for(h=1;h<=5;h++){
+    var k=CYC*h, re=0, im=0, n;
+    for(n=0;n<N;n++){
+      var ph=2*Math.PI*k*n/N;
+      re+=x[n]*Math.cos(ph); im-=x[n]*Math.sin(ph);
+    }
+    res.push(2*Math.sqrt(re*re+im*im)/N);
+  }
+  return res;
+}
+
+function renderWave(x,type,frac){
+  var upto=Math.max(1,Math.floor(frac*(N-1)));
+  var W=680,H=240,ml=46,mr=12,mt=12,mb=30;
+  var ymax=7, ymin=-7;
+  function px(i){return ml+i/(N-1)*(W-ml-mr);}
+  function py(v){return mt+(1-(v-ymin)/(ymax-ymin))*(H-mt-mb);}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="电流波形">';
+  var tt=[0,20,40,60,80,100], i;
+  for(i=0;i<tt.length;i++){
+    var xi=tt[i]/100*(N-1);
+    s+='<line x1="'+px(xi)+'" y1="'+mt+'" x2="'+px(xi)+'" y2="'+(H-mb)+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+px(xi)+'" y="'+(H-mb+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">'+tt[i]+'</text>';
+  }
+  var yv=[-6,-4,-2,0,2,4,6];
+  for(i=0;i<yv.length;i++){
+    s+='<line x1="'+ml+'" y1="'+py(yv[i])+'" x2="'+(W-mr)+'" y2="'+py(yv[i])+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+(ml-6)+'" y="'+(py(yv[i])+4)+'" text-anchor="end" font-size="12" fill="var(--muted-foreground)">'+yv[i]+'</text>';
+  }
+  s+='<line x1="'+ml+'" y1="'+py(0)+'" x2="'+(W-mr)+'" y2="'+py(0)+'" stroke="var(--foreground)" stroke-width="1.2"/>';
+  s+='<text x="'+((ml+W-mr)/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">时间 (ms)</text>';
+  s+='<text x="13" y="'+((mt+H-mb)/2)+'" transform="rotate(-90 13 '+((mt+H-mb)/2)+')" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">电流 (×Ie)</text>';
+  var d='';
+  for(i=0;i<=upto;i++){d+=(i?'L':'M')+px(i).toFixed(1)+','+py(x[i]).toFixed(1);}
+  s+='<path d="'+d+'" fill="none" stroke="var(--viz-series-1)" stroke-width="1.8"/>';
+  if(type==='inrush'){
+    s+='<text x="'+px(N*0.62)+'" y="'+(mt+14)+'" font-size="12" fill="var(--muted-foreground)">以单极性饱和脉冲为主，含小幅正弦励磁分量</text>';
+  }else{
+    s+='<text x="'+px(N*0.62)+'" y="'+(mt+14)+'" font-size="12" fill="var(--muted-foreground)">正弦电流叠加衰减直流分量（无间断）</text>';
+  }
+  s+='</svg>';
+  out.wave.innerHTML=s;
+}
+
+function renderHarm(h){
+  var W=680,H=230,ml=46,mr=12,mt=16,mb=34;
+  var ymax=110;
+  function py(v){return mt+(1-v/ymax)*(H-mt-mb);}
+  var bw=54, gap=(W-ml-mr-5*bw)/6;
+  function bx(i){return ml+gap+(gap+bw)*i;}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="谐波含量柱状图">';
+  var yv=[0,25,50,75,100], i;
+  for(i=0;i<yv.length;i++){
+    s+='<line x1="'+ml+'" y1="'+py(yv[i])+'" x2="'+(W-mr)+'" y2="'+py(yv[i])+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+(ml-6)+'" y="'+(py(yv[i])+4)+'" text-anchor="end" font-size="12" fill="var(--muted-foreground)">'+yv[i]+'%</text>';
+  }
+  s+='<line x1="'+ml+'" y1="'+py(15)+'" x2="'+(W-mr)+'" y2="'+py(15)+'" stroke="var(--red)" stroke-width="1.5" stroke-dasharray="6 4"/>';
+  s+='<text x="'+(bx(3)+bw/2)+'" y="'+(py(15)-6)+'" text-anchor="middle" font-size="12" fill="var(--red)">二次谐波制动门槛 15%</text>';
+  var names=['基波','2 次','3 次','4 次','5 次'];
+  for(i=0;i<5;i++){
+    var pct=h[0]>1e-9?h[i]/h[0]*100:0;
+    var col=i===1?'var(--red)':'var(--viz-series-1)';
+    s+='<rect x="'+bx(i)+'" y="'+py(Math.max(pct,0.5))+'" width="'+bw+'" height="'+(py(0)-py(Math.max(pct,0.5)))+'" fill="'+col+'"/>';
+    s+='<text x="'+(bx(i)+bw/2)+'" y="'+(py(Math.max(pct,0.5))-6)+'" text-anchor="middle" font-size="12" fill="var(--foreground)">'+pct.toFixed(1)+'%</text>';
+    s+='<text x="'+(bx(i)+bw/2)+'" y="'+(py(0)+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">'+names[i]+'</text>';
+  }
+  s+='</svg>';
+  out.harm.innerHTML=s;
+}
+
+function analysis(x,type,h){
+  var peak=0, i;
+  for(i=0;i<N;i++)peak=Math.max(peak,Math.abs(x[i]));
+  var h2=h[0]>1e-9?h[1]/h[0]*100:0;
+  var width=(180-2*Math.asin(SAT)*180/Math.PI).toFixed(0);
+  if(type==='inrush'&&+ui.a.value===90){out.metrics.innerHTML='<div>α = 90°：饱和脉冲分量消失，仅剩 0.06 × Ie 正弦励磁分量，几乎不产生励磁涌流。</div>';out.conc.style.color='var(--green)';out.conc.textContent='有利合闸角下空载合闸基本无涌流，差动保护不存在误动风险。';return;}
+  if(type==='inrush'){
+    out.metrics.innerHTML='<div>波形峰值 ≈ '+peak.toFixed(1)+' × Ie；饱和脉冲分量每周期导通角约 '+width+'°，另含连续的小幅正弦励磁分量</div>'+
+      '<div>二次谐波含量：<span class="tabular-nums" style="font-weight:500">'+h2.toFixed(1)+'%</span>（制动门槛 15%）</div>';
+    if(h2>=15){out.conc.style.color='var(--foreground)';
+      out.conc.textContent='判为励磁涌流：二次谐波含量远超 15% 门槛，二次谐波制动元件闭锁差动保护——空载合闸时保护不误动。';}
+    else{out.conc.style.color='var(--foreground)';
+      out.conc.textContent='合闸角较大时涌流很小，二次谐波含量降低；最不利合闸角（0°）下涌流最大、二次谐波最高。';}
+  }else{
+    out.metrics.innerHTML='<div>波形峰值 ≈ '+peak.toFixed(1)+' × Ie；正弦波叠加衰减直流分量，波形无间断</div>'+
+      '<div>二次谐波含量：<span class="tabular-nums" style="font-weight:500">'+h2.toFixed(1)+'%</span>（制动门槛 15%）</div>';
+    out.conc.style.color='var(--foreground)';
+    out.conc.textContent='判为内部故障：二次谐波含量远低于 15% 门槛，制动解除，差动保护开放并瞬时跳闸。对比可见：衰减直流分量分布于宽频谱，不集中于二次谐波。';
+  }
+}
+
+function refresh(){
+  var type=ui.type.value, a=+ui.a.value;
+  out.av.textContent=a+'°';
+  renderDiagram(type);
+  var x=samples(type,a);
+  var h=harmonics(x);
+  renderWave(x,type,1);
+  renderHarm(h);
+  analysis(x,type,h);
+}
+
+function runSim(){
+  if(running)return;
+  running=true;ui.run.disabled=true;
+  var type=ui.type.value, a=+ui.a.value;
+  renderDiagram(type);
+  var x=samples(type,a);
+  var h=harmonics(x);
+  out.harm.innerHTML='';
+  out.metrics.innerHTML='';
+  out.conc.style.color='var(--muted-foreground)';
+  out.conc.textContent='录波中……';
+  var dur=1400;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){renderWave(x,type,1);renderHarm(h);analysis(x,type,h);running=false;ui.run.disabled=false;return;}
+  var start=null;
+  function frame(ts){
+    if(start===null)start=ts;
+    var frac=Math.min((ts-start)/dur,1);
+    renderWave(x,type,frac);
+    if(frac<1){requestAnimationFrame(frame);}
+    else{
+      renderHarm(h);analysis(x,type,h);
+      running=false;ui.run.disabled=false;
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+ui.type.addEventListener('change',refresh);
+ui.a.addEventListener('input',refresh);
+var CASES={
+  worst:{v:{type:'inrush',a:0},note:'观察要点：最不利合闸角下涌流峰值近 5 倍额定，二次谐波含量约 59%，制动元件可靠闭锁。思考：若取消二次谐波制动，空载合闸会发生什么？'},
+  good:{v:{type:'inrush',a:75},note:'观察要点：α = 75° 时涌流幅值下降，二次谐波比约 51%，仍高于 15% 制动门槛，不能仅因幅值减小就解除制动。再把 α 拉到 90°，观察极端情况。'},
+  fault:{v:{type:'fault',a:0},note:'观察要点：内部短路电流为连续正弦叠加衰减直流，二次谐波远低于 15% 门槛，制动解除、保护开放跳闸。思考：为什么衰减直流分量不会导致二次谐波制动误闭锁？'}
+};
+var caseEl=el('ihs-case'), caseNote=el('ihs-case-note');
+caseEl.addEventListener('change',function(){
+  var v=caseEl.value;
+  if(!v){caseNote.textContent='';return;}
+  var P=CASES[v];
+  ui.type.value=P.v.type; ui.a.value=P.v.a;
+  caseNote.textContent=P.note;
+  refresh(); runSim();
+});
+ui.run.addEventListener('click',runSim);
+refresh();
+})();
+</script>
+
+</main>
+</body>
+</html>

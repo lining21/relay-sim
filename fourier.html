@@ -1,0 +1,299 @@
+﻿<!doctype>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08243f">
+<title>傅氏算法与滑动数据窗 · 电力系统继电保护原理虚拟仿真</title>
+<style>
+:root{--background:#f2f6fa;--foreground:#172b3f;--card:#fff;--card-foreground:#172b3f;--muted:#edf3f7;--muted-foreground:#587086;--primary:#1268b3;--primary-foreground:#fff;--border:#d9e4ed;--red:#c43b35;--green:#168566;--orange:#d37916;--accent:#e8f3fa;--accent-foreground:#172b3f;--viz-series-1:#1268b3;--viz-series-2:#e18a23;--viz-series-3:#168566;--viz-series-4:#8555b5;--viz-series-5:#d44b45;--viz-series-6:#168a9e}
+*{box-sizing:border-box}
+body{margin:0;padding:0 16px 42px;background:var(--background);color:var(--foreground);font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.65}
+.lab-header{margin:0 -16px;background:linear-gradient(112deg,#071d35,#0a3556 65%,#0c526c);color:#fff;border-bottom:2px solid #20a9c4;box-shadow:0 4px 16px rgba(8,38,62,.14)}
+.lab-header-inner{max-width:1080px;margin:auto;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lab-brand{display:flex;align-items:center;gap:11px}.lab-mark{width:37px;height:37px;display:grid;place-items:center;border:1px solid rgba(105,216,235,.45);border-radius:8px;color:#70d8e9;background:rgba(40,181,205,.09)}
+.lab-brand b{display:block;font-size:15px;letter-spacing:.5px;font-weight:600}.lab-brand small{display:block;color:#92b6cb;font-size:9px;letter-spacing:1.6px;line-height:1.4}.lab-return{color:#d4e8f3;font-size:12px;text-decoration:none;border:1px solid rgba(180,215,230,.3);border-radius:6px;padding:5px 11px;white-space:nowrap;transition:.15s}.lab-return:hover{background:rgba(255,255,255,.1);border-color:#71d2e4}
+.lab-subhead{max-width:1080px;margin:18px auto 0;padding:0 4px;display:flex;align-items:center;gap:9px;color:#58738a;font-size:12px}.lab-subhead:before{content:"";width:18px;height:2px;background:#18a9c7}.lab-subhead span{color:#1268b3;letter-spacing:.6px}
+.wrap{max-width:1080px;margin:8px auto 0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:23px 28px 27px;box-shadow:0 7px 24px rgba(21,63,92,.06);position:relative;overflow:hidden}
+.wrap:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#1268b3,#18a9c7 45%,transparent 90%)}
+h3{margin:3px 0 14px;font-size:20px;font-weight:600;line-height:1.45}.wrap>h3{padding-bottom:12px;border-bottom:1px solid var(--border);color:#103c60}
+.text-small{font-size:12px}.text-muted{color:var(--muted-foreground)}.tabular-nums{font-variant-numeric:tabular-nums}.text-end{text-align:right}.text-nowrap{white-space:nowrap}
+.table{width:100%;border-collapse:collapse;margin:5px 0 9px}.table-sm td,.table-sm th{padding:6px 9px;border-bottom:1px solid var(--border);text-align:left}.table-sm th{background:#f1f6fa;color:#35566e;font-weight:500}.table-sm tr:last-child td{border-bottom:0}.table-sm th.text-end,.table-sm td.text-end{text-align:right}
+.form-range{width:100%;accent-color:var(--primary);cursor:pointer}.form-select{padding:6px 30px 6px 10px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);font-family:inherit;font-size:14px;outline:none}.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,104,179,.12)}
+.form-check{display:inline-flex;align-items:center;gap:5px;cursor:pointer}.form-check-input{accent-color:var(--primary);width:15px;height:15px;margin:0}
+.btn{padding:7px 17px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);cursor:pointer;font-family:inherit;font-size:14px;transition:background .15s,border-color .15s,box-shadow .15s}.btn:hover{background:#edf5fa;border-color:#7ba9c5}.btn-primary{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary);box-shadow:0 2px 5px rgba(18,104,179,.16)}.btn-primary:hover{background:#0d599c;border-color:#0d599c}.btn:focus-visible{outline:3px solid rgba(24,169,199,.28);outline-offset:2px}.btn-primary:disabled{opacity:.55;cursor:default}
+input[type="number"],input[type="text"]{border:1px solid #bdcedb;border-radius:5px;padding:5px 8px;color:var(--foreground);font-family:inherit}input[type="number"]:focus,input[type="text"]:focus{outline:2px solid rgba(18,104,179,.15);border-color:var(--primary)}
+@media(max-width:640px){body{padding:0 8px 26px}.lab-header{margin:0 -8px}.lab-header-inner{padding:12px 14px}.lab-brand b{font-size:13px}.lab-brand small{font-size:8px;letter-spacing:1px}.lab-mark{width:32px;height:32px}.lab-return{padding:4px 8px}.wrap{padding:19px 15px 22px}.wrap>h3{font-size:18px}.lab-subhead{padding:0 7px}.table-sm td,.table-sm th{padding:5px}}
+</style>
+</head>
+<body>
+<header class="lab-header"><div class="lab-header-inner">
+  <div class="lab-brand"><span class="lab-mark"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13.2 2 5.8 13h5.6L10.8 22l7.4-11h-5.6L13.2 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><span><b>电力系统继电保护原理 · 虚拟仿真实验</b><small>RELAY PROTECTION VIRTUAL LAB</small></span></div>
+  <a class="lab-return" href="index.html">← 返回实验目录</a>
+</div></header>
+<div class="lab-subhead"><span>模块 07 · 微机保护算法</span> / 交互实验台</div>
+<main class="wrap"><div id="fws-sim">
+<style>
+#fws-sim .fws-controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin:6px 0 12px}
+#fws-sim .fws-field{display:flex;flex-direction:column;gap:4px;flex:1 1 160px;min-width:150px}
+#fws-sim .fws-field>span{font-weight:500}
+#fws-sim .fws-plabel{font-weight:500;margin:10px 0 6px}
+#fws-sim .fws-conc{margin-top:10px;font-weight:500}
+#fws-sim .fws-metrics{margin-top:8px;display:flex;flex-direction:column;gap:2px}
+#fws-sim .fws-params{background:var(--muted);border-radius:8px;padding:8px 12px;margin:6px 0 12px}
+#fws-sim svg{display:block;width:100%;height:auto}
+</style>
+
+<h3>微机保护算法 · 傅氏算法与滑动数据窗</h3>
+
+<div class="fws-params text-small"><b>给定参数（供分析计算）：</b>基波频率 50 Hz，采样率 fs = 1200 Hz（每周期 24 点）；输入电流 i(t) = A1·sin(ωt) + A0·e^(−t/τ) + A3·sin(3ωt) + A5·sin(5ωt)，其中 A1 = 1，τ = 40 ms，A0 = 1、A3 = 0.3、A5 = 0.2（可用复选框投退各分量）。全周傅氏数据窗 20 ms，半周傅氏数据窗 10 ms；对窗内采样点做基波正弦/余弦投影并求模，得到基波幅值估计。</div>
+
+<div class="fws-plabel">保护装置信号链（算法切换时数据窗同步变化）</div>
+<svg viewBox="0 0 760 158" role="img" aria-label="电流互感器二次电流经过采样保持和模数转换、滑动数据窗、傅氏正交投影后输出基波幅值">
+  <defs><marker id="fws-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--primary)"/></marker></defs>
+  <line x1="18" y1="65" x2="92" y2="65" stroke="var(--foreground)" stroke-width="3"/>
+  <circle cx="76" cy="65" r="22" fill="var(--card)" stroke="var(--primary)" stroke-width="3"/>
+  <path d="M65 65 C65 48 87 48 87 65 C87 82 65 82 65 65" fill="none" stroke="var(--viz-series-2)" stroke-width="2"/>
+  <text x="18" y="42" font-size="13" fill="var(--foreground)">一次电流</text>
+  <text x="52" y="108" font-size="13" fill="var(--foreground)">CT</text>
+  <line x1="98" y1="65" x2="132" y2="65" stroke="var(--primary)" stroke-width="2" marker-end="url(#fws-arrow)"/>
+  <text x="105" y="91" font-size="12" fill="var(--muted-foreground)">i(t)</text>
+  <rect x="140" y="34" width="126" height="64" rx="8" fill="var(--accent)" stroke="var(--primary)" stroke-width="1.5"/>
+  <text x="203" y="59" text-anchor="middle" font-size="14" fill="var(--foreground)">采样保持 / A-D</text>
+  <text x="203" y="81" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">fs = 1200 Hz</text>
+  <line x1="266" y1="65" x2="302" y2="65" stroke="var(--primary)" stroke-width="2" marker-end="url(#fws-arrow)"/>
+  <rect x="310" y="25" width="142" height="82" rx="8" fill="var(--accent)" stroke="var(--primary)" stroke-width="1.5"/>
+  <text x="381" y="50" text-anchor="middle" font-size="14" fill="var(--foreground)">滑动数据窗</text>
+  <text id="fws-chain-window" x="381" y="73" text-anchor="middle" font-size="13" fill="var(--primary)">全周：20 ms</text>
+  <text id="fws-chain-points" x="381" y="93" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">24 点 / 窗</text>
+  <line x1="452" y1="65" x2="488" y2="65" stroke="var(--primary)" stroke-width="2" marker-end="url(#fws-arrow)"/>
+  <rect x="496" y="34" width="126" height="64" rx="8" fill="var(--accent)" stroke="var(--primary)" stroke-width="1.5"/>
+  <text x="559" y="59" text-anchor="middle" font-size="14" fill="var(--foreground)">傅氏正交投影</text>
+  <text x="559" y="81" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">sin ωt / cos ωt</text>
+  <line x1="622" y1="65" x2="658" y2="65" stroke="var(--primary)" stroke-width="2" marker-end="url(#fws-arrow)"/>
+  <circle cx="704" cy="65" r="38" fill="var(--card)" stroke="var(--green)" stroke-width="2"/>
+  <text x="704" y="60" text-anchor="middle" font-size="13" fill="var(--foreground)">基波幅值</text>
+  <text x="704" y="82" text-anchor="middle" font-size="17" fill="var(--green)">A₁</text>
+  <text x="18" y="140" font-size="12" fill="var(--muted-foreground)">电流互感器变换</text>
+  <text x="140" y="140" font-size="12" fill="var(--muted-foreground)">连续量 → 离散序列</text>
+  <text x="310" y="140" font-size="12" fill="var(--muted-foreground)">选取参与计算的采样点</text>
+  <text x="496" y="140" font-size="12" fill="var(--muted-foreground)">提取基波相量并求模</text>
+</svg>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 10px">
+  <span style="font-weight:500">典型案例：</span>
+  <select class="form-select" id="fws-case">
+    <option value="">手动探索（自行调节参数）</option>
+    <option value="harm">案例1：全周傅氏完全滤除整次谐波</option>
+    <option value="dc">案例2：衰减直流分量的泄漏误差</option>
+    <option value="half">案例3：半周傅氏的快速与波动对比</option>
+  </select>
+  <span class="text-small" id="fws-case-note" style="flex:1 1 260px"></span>
+</div>
+
+<div class="fws-controls">
+  <span class="fws-field" style="flex:2 1 320px"><span>输入信号成分</span>
+    <span style="display:flex;gap:16px;flex-wrap:wrap">
+      <label class="form-check"><input type="checkbox" class="form-check-input" id="fws-dc" checked><span>衰减直流 A0</span></label>
+      <label class="form-check"><input type="checkbox" class="form-check-input" id="fws-h3" checked><span>三次谐波 A3</span></label>
+      <label class="form-check"><input type="checkbox" class="form-check-input" id="fws-h5" checked><span>五次谐波 A5</span></label>
+    </span></span>
+  <label class="fws-field"><span>算法</span>
+    <select class="form-select" id="fws-alg">
+      <option value="full" selected>全周傅氏（窗长 20 ms）</option>
+      <option value="half">半周傅氏（窗长 10 ms）</option>
+    </select></label>
+  <button type="button" class="btn btn-primary" id="fws-run">播放滑窗计算</button>
+</div>
+
+<div class="fws-plabel">输入波形与数据窗（阴影为当前窗口）</div>
+<div id="fws-wave" role="img" aria-label="输入波形与滑动数据窗"></div>
+
+<div class="fws-plabel">基波幅值估计随窗口位置的输出（虚线为真实基波幅值 1）</div>
+<div id="fws-out" role="img" aria-label="基波幅值估计输出曲线"></div>
+
+<div class="fws-metrics text-small" id="fws-metrics"></div>
+<div class="fws-conc" id="fws-conc" aria-live="polite">选择信号成分与算法后，点击「播放滑窗计算」观察滤波效果。</div>
+</div>
+<script>
+(function(){
+var FS=1200, TEND=0.08, TAU=0.04;
+var N=Math.round(TEND*FS)+1; // 97 点，0~80ms
+function el(id){return document.getElementById(id);}
+var ui={dc:el('fws-dc'),h3:el('fws-h3'),h5:el('fws-h5'),alg:el('fws-alg'),run:el('fws-run')};
+var out={wave:el('fws-wave'),outp:el('fws-out'),metrics:el('fws-metrics'),conc:el('fws-conc')};
+var running=false;
+
+function updateChain(){
+  var full=ui.alg.value==='full';
+  el('fws-chain-window').textContent=full?'全周：20 ms':'半周：10 ms';
+  el('fws-chain-points').textContent=full?'24 点 / 窗':'12 点 / 窗';
+}
+
+function sig(t){
+  var v=Math.sin(2*Math.PI*50*t);
+  if(ui.dc.checked)v+=Math.exp(-t/TAU);
+  if(ui.h3.checked)v+=0.3*Math.sin(3*2*Math.PI*50*t);
+  if(ui.h5.checked)v+=0.2*Math.sin(5*2*Math.PI*50*t);
+  return v;
+}
+function winLen(){return ui.alg.value==='full'?0.02:0.01;}
+function ampAt(t0){
+  var T=winLen(), M=Math.round(T*FS), i, a=0, b=0;
+  for(i=0;i<M;i++){
+    var t=t0+i/FS, v=sig(t), th=2*Math.PI*50*t;
+    a+=v*Math.cos(th); b+=v*Math.sin(th);
+  }
+  a=a*2/M; b=b*2/M;
+  return Math.sqrt(a*a+b*b);
+}
+function outSeries(){
+  var T=winLen(), res=[];
+  var steps=Math.round((TEND-T)/0.001);
+  for(var k=0;k<=steps;k++){
+    var t0=k*0.001;
+    res.push({t:t0+T, a:ampAt(t0)});
+  }
+  return res;
+}
+
+function renderWave(cursor){
+  var W=680,H=230,ml=40,mr=12,mt=12,mb=30;
+  var YMAX=2.6;
+  function px(t){return ml+t/TEND*(W-ml-mr);}
+  function py(v){return mt+(1-(v+YMAX)/(2*YMAX))*(H-mt-mb);}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="输入波形与数据窗">';
+  var i;
+  for(i=0;i<=8;i++){
+    var t=i*0.01;
+    s+='<line x1="'+px(t)+'" y1="'+mt+'" x2="'+px(t)+'" y2="'+(H-mb)+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+px(t)+'" y="'+(H-mb+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">'+(t*1000).toFixed(0)+'</text>';
+  }
+  var yv=[-2,-1,0,1,2];
+  for(i=0;i<yv.length;i++){
+    s+='<line x1="'+ml+'" y1="'+py(yv[i])+'" x2="'+(W-mr)+'" y2="'+py(yv[i])+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+(ml-6)+'" y="'+(py(yv[i])+4)+'" text-anchor="end" font-size="12" fill="var(--muted-foreground)">'+yv[i]+'</text>';
+  }
+  s+='<text x="'+((ml+W-mr)/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">时间 (ms)</text>';
+  if(cursor!==null){
+    var T=winLen();
+    s+='<rect x="'+px(cursor)+'" y="'+mt+'" width="'+(px(cursor+T)-px(cursor))+'" height="'+(H-mb-mt)+'" fill="var(--viz-series-1)" fill-opacity="0.12"/>';
+    s+='<text x="'+((px(cursor)+px(cursor+T))/2)+'" y="'+(mt+14)+'" text-anchor="middle" font-size="12" fill="var(--foreground)">数据窗</text>';
+  }
+  var d='';
+  for(i=0;i<N;i++){
+    var t=i/FS, v=sig(t);
+    d+=(i?'L':'M')+px(t).toFixed(1)+','+py(Math.max(-YMAX,Math.min(YMAX,v))).toFixed(1);
+  }
+  s+='<path d="'+d+'" fill="none" stroke="var(--viz-series-1)" stroke-width="1.8"/>';
+  s+='</svg>';
+  out.wave.innerHTML=s;
+}
+
+function renderOut(series,upto){
+  var W=680,H=230,ml=40,mr=12,mt=12,mb=30;
+  var YMIN=0, YMAX=2.2;
+  function px(t){return ml+t/TEND*(W-ml-mr);}
+  function py(v){return mt+(1-(Math.min(YMAX,Math.max(YMIN,v))-YMIN)/(YMAX-YMIN))*(H-mt-mb);}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="基波幅值估计输出">';
+  var i;
+  for(i=0;i<=8;i++){
+    var t=i*0.01;
+    s+='<line x1="'+px(t)+'" y1="'+mt+'" x2="'+px(t)+'" y2="'+(H-mb)+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+px(t)+'" y="'+(H-mb+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">'+(t*1000).toFixed(0)+'</text>';
+  }
+  var yv=[0,0.5,1,1.5,2];
+  for(i=0;i<yv.length;i++){
+    s+='<line x1="'+ml+'" y1="'+py(yv[i])+'" x2="'+(W-mr)+'" y2="'+py(yv[i])+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+(ml-6)+'" y="'+(py(yv[i])+4)+'" text-anchor="end" font-size="12" fill="var(--muted-foreground)">'+yv[i].toFixed(1)+'</text>';
+  }
+  s+='<text x="'+((ml+W-mr)/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">窗口末端时刻 (ms)</text>';
+  s+='<text x="13" y="'+((mt+H-mb)/2)+'" transform="rotate(-90 13 '+((mt+H-mb)/2)+')" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">基波幅值估计</text>';
+  s+='<line x1="'+ml+'" y1="'+py(1)+'" x2="'+(W-mr)+'" y2="'+py(1)+'" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="6 4"/>';
+  s+='<text x="'+(W-mr-4)+'" y="'+(py(1)-6)+'" text-anchor="end" font-size="12" fill="var(--green)">真实基波幅值 = 1</text>';
+  var d='', started=false;
+  for(i=0;i<series.length;i++){
+    if(i>upto)break;
+    d+=(started?'L':'M')+px(series[i].t).toFixed(1)+','+py(series[i].a).toFixed(1);
+    started=true;
+  }
+  s+='<path d="'+d+'" fill="none" stroke="var(--viz-series-5)" stroke-width="2"/>';
+  s+='</svg>';
+  out.outp.innerHTML=s;
+}
+
+function analysis(series,alg){
+  var maxDev=0;
+  series.forEach(function(p){maxDev=Math.max(maxDev,Math.abs(p.a-1));});
+  var comp=[];
+  if(ui.dc.checked)comp.push('衰减直流');
+  if(ui.h3.checked)comp.push('三次谐波');
+  if(ui.h5.checked)comp.push('五次谐波');
+  out.metrics.innerHTML='<div>输入成分：基波'+(comp.length?' + '+comp.join(' + '):'')+'；算法输出最大偏差 |ΔA1| ≈ '+maxDev.toFixed(3)+'（相对真实值 1）</div>';
+  var t;
+  if(alg==='full'){
+    t='全周傅氏：数据窗恰为一个完整周波，对整次谐波（3 次、5 次等）理论上完全滤除，输出偏差全部来自衰减直流分量的泄漏。实际装置常先用差分滤波器消除衰减直流，再作全周傅氏。';
+    if(!ui.dc.checked&&(ui.h3.checked||ui.h5.checked))t+=' 当前无直流分量：可以看到输出恒等于 1，整次谐波被完全滤除。';
+  }else{
+    t='半周傅氏：数据窗缩短一半，最快 10 ms 即可获得基波估计，但滤波能力弱——只能滤除偶次谐波，奇次谐波与衰减直流都会泄漏，输出出现明显波动。可用于对速度要求高、辅以其他滤波的场合。';
+  }
+  out.conc.style.color='var(--foreground)';
+  out.conc.textContent=t;
+}
+
+function refresh(){
+  updateChain();
+  renderWave(null);
+  out.outp.innerHTML='';
+  out.metrics.innerHTML='';
+  out.conc.style.color='var(--muted-foreground)';
+  out.conc.textContent='选择信号成分与算法后，点击「播放滑窗计算」观察滤波效果。';
+}
+function runSim(){
+  if(running)return;
+  running=true;ui.run.disabled=true;
+  var alg=ui.alg.value;
+  var series=outSeries();
+  out.conc.style.color='var(--foreground)';
+  out.conc.textContent='滑窗计算中……';
+  var dur=3600;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){renderWave(TEND-winLen());renderOut(series,series.length-1);analysis(series,alg);running=false;ui.run.disabled=false;return;}
+  var start=null;
+  function frame(ts){
+    if(start===null)start=ts;
+    var frac=Math.min((ts-start)/dur,1);
+    var T=winLen();
+    var cursor=frac*(TEND-T);
+    renderWave(cursor);
+    renderOut(series,Math.floor(frac*(series.length-1)));
+    if(frac<1){requestAnimationFrame(frame);}
+    else{analysis(series,alg);running=false;ui.run.disabled=false;}
+  }
+  requestAnimationFrame(frame);
+}
+['dc','h3','h5','alg'].forEach(function(k){
+  ui[k].addEventListener('change',refresh);
+});
+var CASES={
+  harm:{v:{dc:false,h3:true,h5:true,alg:'full'},note:'观察要点：输入含三次、五次谐波但无直流，全周傅氏输出恒等于真实基波幅值 1——整次谐波被完全滤除。思考：为什么窗长必须恰好一个周波？'},
+  dc:{v:{dc:true,h3:false,h5:false,alg:'full'},note:'观察要点：只保留衰减直流，全周傅氏输出出现随窗位置变化的泄漏误差。思考：为什么先用差分滤波器“减掉”衰减直流后再做傅氏？'},
+  half:{v:{dc:true,h3:true,h5:true,alg:'half'},note:'观察要点：半周傅氏只需 10 ms 数据，响应快，但奇次谐波与直流泄漏使输出明显波动。与全周算法对比，体会“快速性—滤波能力”的权衡。'}
+};
+var caseEl=el('fws-case'), caseNote=el('fws-case-note');
+caseEl.addEventListener('change',function(){
+  var v=caseEl.value;
+  if(!v){caseNote.textContent='';return;}
+  var P=CASES[v];
+  ui.dc.checked=P.v.dc; ui.h3.checked=P.v.h3; ui.h5.checked=P.v.h5; ui.alg.value=P.v.alg;
+  caseNote.textContent=P.note;
+  refresh(); runSim();
+});
+ui.run.addEventListener('click',runSim);
+refresh();
+})();
+</script>
+
+</main>
+</body>
+</html>

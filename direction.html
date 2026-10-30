@@ -1,0 +1,310 @@
+﻿<!doctype>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08243f">
+<title>功率方向元件与 90° 接线 · 电力系统继电保护原理虚拟仿真</title>
+<style>
+:root{--background:#f2f6fa;--foreground:#172b3f;--card:#fff;--card-foreground:#172b3f;--muted:#edf3f7;--muted-foreground:#587086;--primary:#1268b3;--primary-foreground:#fff;--border:#d9e4ed;--red:#c43b35;--green:#168566;--orange:#d37916;--accent:#e8f3fa;--accent-foreground:#172b3f;--viz-series-1:#1268b3;--viz-series-2:#e18a23;--viz-series-3:#168566;--viz-series-4:#8555b5;--viz-series-5:#d44b45;--viz-series-6:#168a9e}
+*{box-sizing:border-box}
+body{margin:0;padding:0 16px 42px;background:var(--background);color:var(--foreground);font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.65}
+.lab-header{margin:0 -16px;background:linear-gradient(112deg,#071d35,#0a3556 65%,#0c526c);color:#fff;border-bottom:2px solid #20a9c4;box-shadow:0 4px 16px rgba(8,38,62,.14)}
+.lab-header-inner{max-width:1080px;margin:auto;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lab-brand{display:flex;align-items:center;gap:11px}.lab-mark{width:37px;height:37px;display:grid;place-items:center;border:1px solid rgba(105,216,235,.45);border-radius:8px;color:#70d8e9;background:rgba(40,181,205,.09)}
+.lab-brand b{display:block;font-size:15px;letter-spacing:.5px;font-weight:600}.lab-brand small{display:block;color:#92b6cb;font-size:9px;letter-spacing:1.6px;line-height:1.4}.lab-return{color:#d4e8f3;font-size:12px;text-decoration:none;border:1px solid rgba(180,215,230,.3);border-radius:6px;padding:5px 11px;white-space:nowrap;transition:.15s}.lab-return:hover{background:rgba(255,255,255,.1);border-color:#71d2e4}
+.lab-subhead{max-width:1080px;margin:18px auto 0;padding:0 4px;display:flex;align-items:center;gap:9px;color:#58738a;font-size:12px}.lab-subhead:before{content:"";width:18px;height:2px;background:#18a9c7}.lab-subhead span{color:#1268b3;letter-spacing:.6px}
+.wrap{max-width:1080px;margin:8px auto 0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:23px 28px 27px;box-shadow:0 7px 24px rgba(21,63,92,.06);position:relative;overflow:hidden}
+.wrap:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#1268b3,#18a9c7 45%,transparent 90%)}
+h3{margin:3px 0 14px;font-size:20px;font-weight:600;line-height:1.45}.wrap>h3{padding-bottom:12px;border-bottom:1px solid var(--border);color:#103c60}
+.text-small{font-size:12px}.text-muted{color:var(--muted-foreground)}.tabular-nums{font-variant-numeric:tabular-nums}.text-end{text-align:right}.text-nowrap{white-space:nowrap}
+.table{width:100%;border-collapse:collapse;margin:5px 0 9px}.table-sm td,.table-sm th{padding:6px 9px;border-bottom:1px solid var(--border);text-align:left}.table-sm th{background:#f1f6fa;color:#35566e;font-weight:500}.table-sm tr:last-child td{border-bottom:0}.table-sm th.text-end,.table-sm td.text-end{text-align:right}
+.form-range{width:100%;accent-color:var(--primary);cursor:pointer}.form-select{padding:6px 30px 6px 10px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);font-family:inherit;font-size:14px;outline:none}.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,104,179,.12)}
+.form-check{display:inline-flex;align-items:center;gap:5px;cursor:pointer}.form-check-input{accent-color:var(--primary);width:15px;height:15px;margin:0}
+.btn{padding:7px 17px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);cursor:pointer;font-family:inherit;font-size:14px;transition:background .15s,border-color .15s,box-shadow .15s}.btn:hover{background:#edf5fa;border-color:#7ba9c5}.btn-primary{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary);box-shadow:0 2px 5px rgba(18,104,179,.16)}.btn-primary:hover{background:#0d599c;border-color:#0d599c}.btn:focus-visible{outline:3px solid rgba(24,169,199,.28);outline-offset:2px}.btn-primary:disabled{opacity:.55;cursor:default}
+input[type="number"],input[type="text"]{border:1px solid #bdcedb;border-radius:5px;padding:5px 8px;color:var(--foreground);font-family:inherit}input[type="number"]:focus,input[type="text"]:focus{outline:2px solid rgba(18,104,179,.15);border-color:var(--primary)}
+@media(max-width:640px){body{padding:0 8px 26px}.lab-header{margin:0 -8px}.lab-header-inner{padding:12px 14px}.lab-brand b{font-size:13px}.lab-brand small{font-size:8px;letter-spacing:1px}.lab-mark{width:32px;height:32px}.lab-return{padding:4px 8px}.wrap{padding:19px 15px 22px}.wrap>h3{font-size:18px}.lab-subhead{padding:0 7px}.table-sm td,.table-sm th{padding:5px}}
+</style>
+</head>
+<body>
+<header class="lab-header"><div class="lab-header-inner">
+  <div class="lab-brand"><span class="lab-mark"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13.2 2 5.8 13h5.6L10.8 22l7.4-11h-5.6L13.2 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><span><b>电力系统继电保护原理 · 虚拟仿真实验</b><small>RELAY PROTECTION VIRTUAL LAB</small></span></div>
+  <a class="lab-return" href="index.html">← 返回实验目录</a>
+</div></header>
+<div class="lab-subhead"><span>模块 05 · 方向电流保护</span> / 交互实验台</div>
+<main class="wrap"><div id="dir-sim">
+<style>
+#dir-sim .dir-controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin:6px 0 12px}
+#dir-sim .dir-field{display:flex;flex-direction:column;gap:4px;flex:1 1 150px;min-width:140px}
+#dir-sim .dir-field>span{font-weight:500}
+#dir-sim .dir-grid{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+#dir-sim .dir-chart{flex:3 1 420px;min-width:300px}
+#dir-sim .dir-result{flex:2 1 260px;min-width:240px}
+#dir-sim .dir-plabel{font-weight:500;margin:4px 0 6px}
+#dir-sim .dir-conc{margin-top:10px;font-weight:500}
+#dir-sim .dir-metrics{margin-top:8px;display:flex;flex-direction:column;gap:2px}
+#dir-sim .dir-params{background:var(--muted);border-radius:8px;padding:8px 12px;margin:6px 0 12px}
+#dir-sim .dir-tl{display:none;align-items:center;gap:10px;margin-top:10px}
+#dir-sim .dir-track{flex:1;height:8px;background:var(--muted);border-radius:4px;overflow:hidden}
+#dir-sim #dir-tl-fill{height:100%;width:0;background:var(--viz-series-1)}
+#dir-sim svg{display:block;width:100%;height:auto}
+</style>
+
+<h3>方向电流保护 · 功率方向元件与 90° 接线</h3>
+
+<div class="dir-params text-small"><b>给定参数（供分析计算）：</b>90° 接线方式：A 相元件接入 İA 与 U̇BC（B 相：İB、U̇CA；C 相：İC、U̇AB），三相短路时接入电压与电流夹角为 90° 而得名。记 φ = arg(İA/U̇BC)，内角（最大灵敏角）α 可选 30°/45°，动作条件 |φ − α| ≤ 90°。正向三相短路时 φ = 90° − φk（φk 为线路阻抗角，滑块可调）；反向故障时电流反相，φ 变化 180°。方向元件出口固有动作时间教学取约 0.06 s；若与电流段配合，应以该段整定延时为准。</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 10px">
+  <span style="font-weight:500">典型案例：</span>
+  <select class="form-select" id="dir-case">
+    <option value="">手动探索（自行调节参数）</option>
+    <option value="fwd">案例1：正向短路，方向元件动作</option>
+    <option value="rev">案例2：反向短路，方向元件闭锁</option>
+    <option value="near">案例3：出口近区三相短路，电压死区</option>
+  </select>
+  <span class="text-small" id="dir-case-note" style="flex:1 1 260px"></span>
+</div>
+
+<div class="dir-controls">
+  <label class="dir-field"><span>故障位置</span>
+    <select class="form-select" id="dir-sc">
+      <option value="fwd" selected>正向短路（保护方向内）</option>
+      <option value="near">正向出口近区三相短路（电压死区）</option>
+      <option value="rev">反向短路（保护方向外）</option>
+    </select></label>
+  <label class="dir-field"><span>线路阻抗角 φk：<span class="tabular-nums" id="dir-pk-v">60°</span></span>
+    <input type="range" class="form-range" id="dir-pk" min="30" max="85" step="5" value="60"></label>
+  <label class="dir-field"><span>内角 α（最大灵敏角）</span>
+    <select class="form-select" id="dir-alpha">
+      <option value="30" selected>30°</option>
+      <option value="45">45°</option>
+    </select></label>
+  <button type="button" class="btn btn-primary" id="dir-run">模拟故障</button>
+</div>
+
+<div class="dir-grid">
+  <div class="dir-chart">
+    <div class="dir-plabel">双端电源网络与故障位置</div>
+    <div id="dir-diagram" role="img" aria-label="双端电源网络示意图"></div>
+    <div class="dir-plabel">相量图与动作区（以 A 相元件为例）</div>
+    <div id="dir-plane" role="img" aria-label="电压电流相量图与功率方向元件动作区"></div>
+    <div class="text-small" style="color:var(--muted-foreground);margin-top:2px">阴影半圆为动作区（İA 落入其中则方向元件动作）；虚线为最大灵敏线（arg İA = α − 90°）。</div>
+  </div>
+  <div class="dir-result">
+    <div class="dir-plabel">动作分析</div>
+    <div>φ = arg(İA/U̇BC) = <span class="tabular-nums" id="dir-phi" style="font-weight:500">—</span>　动作区 [α−90°, α+90°] = <span class="tabular-nums" id="dir-zone">—</span></div>
+    <table class="table table-sm" style="margin-top:6px">
+      <thead><tr><th>元件</th><th>判据</th><th class="text-nowrap">状态</th></tr></thead>
+      <tbody>
+        <tr><td>电流启动元件</td><td class="text-nowrap">Ik &gt; Iset</td><td class="text-nowrap" id="dir-st1">—</td></tr>
+        <tr><td>功率方向元件</td><td class="text-nowrap">|φ − α| ≤ 90°</td><td class="text-nowrap" id="dir-st2">—</td></tr>
+        <tr><td>保护出口（与门）</td><td class="text-nowrap">启动 且 方向动作</td><td class="text-nowrap" id="dir-st3">—</td></tr>
+      </tbody>
+    </table>
+    <div class="dir-metrics text-small" id="dir-metrics"></div>
+    <div class="dir-conc" id="dir-conc" aria-live="polite">选择故障位置后，点击「模拟故障」观察方向元件的判别过程。</div>
+    <div class="dir-tl" id="dir-tl">
+      <div class="dir-track"><div id="dir-tl-fill"></div></div>
+      <span class="tabular-nums text-small" id="dir-tl-t">t = 0.00 s</span>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+(function(){
+var TTRIP=0.06;
+function el(id){return document.getElementById(id);}
+var ui={sc:el('dir-sc'),pk:el('dir-pk'),alpha:el('dir-alpha'),run:el('dir-run')};
+var out={pkv:el('dir-pk-v'),plane:el('dir-plane'),phi:el('dir-phi'),zone:el('dir-zone'),diagram:el('dir-diagram'),
+  st1:el('dir-st1'),st2:el('dir-st2'),st3:el('dir-st3'),
+  metrics:el('dir-metrics'),conc:el('dir-conc'),tl:el('dir-tl'),tlf:el('dir-tl-fill'),tlt:el('dir-tl-t')};
+var running=false;
+
+function renderDiagram(C){
+  var y=70, xf, klabel;
+  if(C.sc==='fwd'){xf=330;klabel='k（正向故障）';}
+  else if(C.sc==='near'){xf=168;klabel='k（出口近区）';}
+  else{xf=66;klabel='k（反向故障）';}
+  var s='<svg viewBox="0 0 680 140" role="img" aria-label="双端电源网络方向保护示意图">';
+  s+='<circle cx="30" cy="'+y+'" r="14" fill="none" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<text x="30" y="'+(y+4)+'" text-anchor="middle" font-size="13" fill="var(--foreground)">~</text>';
+  s+='<text x="30" y="118" text-anchor="middle" font-size="12" fill="var(--foreground)">系统A</text>';
+  s+='<line x1="44" y1="'+y+'" x2="100" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<line x1="100" y1="52" x2="100" y2="88" stroke="var(--foreground)" stroke-width="4"/>';
+  s+='<text x="100" y="44" text-anchor="middle" font-size="12" fill="var(--foreground)">母线A</text>';
+  s+='<line x1="100" y1="'+y+'" x2="130" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<rect x="130" y="'+(y-10)+'" width="20" height="20" fill="none" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<path d="M130,'+y+' L150,'+y+'" stroke="var(--foreground)" stroke-width="2.5" fill="none"/>';
+  s+='<text x="140" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">QF1·方向保护</text>';
+  s+='<line x1="150" y1="'+y+'" x2="430" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<text x="290" y="104" text-anchor="middle" font-size="11" fill="var(--muted-foreground)">线路 L</text>';
+  s+='<line x1="430" y1="52" x2="430" y2="88" stroke="var(--foreground)" stroke-width="4"/>';
+  s+='<text x="430" y="44" text-anchor="middle" font-size="12" fill="var(--foreground)">母线B</text>';
+  s+='<line x1="430" y1="'+y+'" x2="460" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<rect x="460" y="'+(y-10)+'" width="20" height="20" fill="none" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<path d="M460,'+y+' L480,'+y+'" stroke="var(--foreground)" stroke-width="2.5" fill="none"/>';
+  s+='<text x="470" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">QF2</text>';
+  s+='<line x1="480" y1="'+y+'" x2="576" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<circle cx="590" cy="'+y+'" r="14" fill="none" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<text x="590" y="'+(y+4)+'" text-anchor="middle" font-size="13" fill="var(--foreground)">~</text>';
+  s+='<text x="590" y="118" text-anchor="middle" font-size="12" fill="var(--foreground)">系统B</text>';
+  s+='<line x1="230" y1="34" x2="330" y2="34" stroke="var(--viz-series-1)" stroke-width="1.8"/>';
+  s+='<polygon points="330,34 322,30 322,38" fill="var(--viz-series-1)"/>';
+  s+='<text x="248" y="26" font-size="12" fill="var(--viz-series-1)">规定的正方向</text>';
+  s+='<line x1="'+(xf-6)+'" y1="'+(y-6)+'" x2="'+(xf+6)+'" y2="'+(y+6)+'" stroke="var(--red)" stroke-width="2.5"/>';
+  s+='<line x1="'+(xf-6)+'" y1="'+(y+6)+'" x2="'+(xf+6)+'" y2="'+(y-6)+'" stroke="var(--red)" stroke-width="2.5"/>';
+  s+='<text x="'+(xf+12)+'" y="'+(y-10)+'" font-size="12" fill="var(--red)">'+klabel+'</text>';
+  s+='</svg>';
+  out.diagram.innerHTML=s;
+}
+
+function compute(){
+  var sc=ui.sc.value, pk=+ui.pk.value, alpha=+ui.alpha.value;
+  var phi; // arg(Ia/Ubc), 度
+  if(sc==='rev'){ phi=90-pk-180; }
+  else{ phi=90-pk; }
+  while(phi>180)phi-=360; while(phi<-180)phi+=360;
+  var deadzone=(sc==='near');
+  var dirOk=!deadzone && Math.abs(phi-alpha)<=90;
+  var curOk=true;
+  var act=curOk&&dirOk;
+  return {sc:sc,pk:pk,alpha:alpha,phi:phi,deadzone:deadzone,dirOk:dirOk,curOk:curOk,act:act};
+}
+
+function render(C){
+  var W=680,H=380,cx=300,cy=190,R=130;
+  function pt(ang,r){var a=ang*Math.PI/180;return [cx+r*Math.cos(a),cy-r*Math.sin(a)];}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="相量图">';
+  var i, a1=C.alpha-180, a2=C.alpha;
+  var sec='M'+cx+','+cy;
+  for(i=0;i<=36;i++){var p=pt(a1+5*i,R);sec+=' L'+p[0].toFixed(1)+','+p[1].toFixed(1);}
+  sec+=' Z';
+  s+='<path d="'+sec+'" fill="var(--viz-series-3)" fill-opacity="0.12"/>';
+  s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="none" stroke="var(--border)" stroke-width="1.5"/>';
+  s+='<line x1="'+(cx-R-18)+'" y1="'+cy+'" x2="'+(cx+R+18)+'" y2="'+cy+'" stroke="var(--border)" stroke-width="1"/>';
+  s+='<line x1="'+cx+'" y1="'+(cy-R-18)+'" x2="'+cx+'" y2="'+(cy+R+18)+'" stroke="var(--border)" stroke-width="1"/>';
+  function phasor(ang,len,color,w,dash){
+    var p=pt(ang,len);
+    var m=pt(ang,len-10), m1=pt(ang+6,len-22), m2=pt(ang-6,len-22);
+    return '<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="'+color+'" stroke-width="'+w+'"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/>'+
+      '<polygon points="'+p[0].toFixed(1)+','+p[1].toFixed(1)+' '+m1[0].toFixed(1)+','+m1[1].toFixed(1)+' '+m2[0].toFixed(1)+','+m2[1].toFixed(1)+'" fill="'+color+'"/>';
+  }
+  function label(ang,len,txt,color){
+    var p=pt(ang,len);
+    return '<text x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" text-anchor="middle" font-size="12" fill="'+(color||'var(--foreground)')+'">'+txt+'</text>';
+  }
+  if(!C.deadzone){
+    s+=phasor(0,R*0.82,'var(--muted-foreground)',1.2);
+    s+=label(0,R*0.82+16,'Ua');
+    s+=phasor(-120,R*0.82,'var(--muted-foreground)',1.2);
+    s+=label(-120,R*0.82+18,'Ub');
+    s+=phasor(120,R*0.82,'var(--muted-foreground)',1.2);
+    s+=label(120,R*0.82+14,'Uc');
+    s+=phasor(-90,R,'var(--viz-series-2)',2.5);
+    s+=label(-90,R+16,'Ubc','var(--viz-series-2)');
+  }else{
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="5" fill="var(--red)"/>';
+    s+='<text x="'+(cx+24)+'" y="'+(cy-12)+'" font-size="12" fill="var(--red)">出口三相短路：Ua、Ub、Uc 及 Ubc 均显著降低</text>';
+    s+='<text x="'+(cx+24)+'" y="'+(cy+12)+'" font-size="12" fill="var(--red)">Ubc ≈ 0，方向元件出现电压死区</text>';
+  }
+  var ls=pt(C.alpha-90,R);
+  var le=pt(C.alpha+90,R);
+  s+='<line x1="'+le[0].toFixed(1)+'" y1="'+le[1].toFixed(1)+'" x2="'+ls[0].toFixed(1)+'" y2="'+ls[1].toFixed(1)+'" stroke="var(--muted-foreground)" stroke-width="1.2" stroke-dasharray="5 4"/>';
+  s+=label(C.alpha+90,R+16,'最大灵敏线','var(--muted-foreground)');
+  var ia=C.sc==='rev'?(-C.pk+180):(-C.pk);
+  s+=phasor(ia,R*0.9,C.dirOk?'var(--green)':'var(--red)',3);
+  s+=label(ia,R*0.9+18,'Ia',C.dirOk?'var(--green)':'var(--red)');
+  s+='<text x="'+(cx-R)+'" y="24" font-size="12" fill="var(--muted-foreground)">动作区：|φ − α| ≤ 90°（阴影）</text>';
+  s+='</svg>';
+  out.plane.innerHTML=s;
+}
+
+function renderResult(C){
+  out.pkv.textContent=C.pk+'°';
+  out.phi.textContent=C.deadzone?'无法测量（Ubc≈0）':(C.phi.toFixed(0)+'°');
+  out.zone.textContent='['+(C.alpha-90)+'°, '+(C.alpha+90)+'°]';
+  if(C.deadzone)out.metrics.innerHTML='<div>出口近区三相短路：各相电压及 U̇BC 均显著降低，U̇BC ≈ 0，故 φ = arg(İA/U̇BC) 无法定义，不能按健全电压公式计算。</div>';
+  else out.metrics.innerHTML='<div>90° 接线：A 相元件接 İA、U̇BC；'+(C.sc==='rev'?'反向故障电流反相，φ = −90° − φk = '+C.phi.toFixed(0)+'°':'正向三相短路时 φ = 90° − φk = '+(90-C.pk)+'°')+'</div>';
+}
+function conclusion(C){
+  if(C.act)return {t:'方向元件动作、电流元件启动：与门开放，方向电流保护约 0.06 s 出口跳闸（若配时限则按整定延时）。',c:'var(--foreground)'};
+  if(C.deadzone)return {t:'电压死区：出口近区三相短路时 Ubc≈0，方向元件无法判别方向而拒动。实际保护采用“记忆电压”（故障前电压）或故障分量元件消除死区。',c:'var(--red)'};
+  return {t:'反向故障：İA 反相 180°，φ 落在动作区外，方向元件不动作，与门闭锁，保护不出口——方向元件保证了选择性，故障由所在侧的相应保护切除。',c:'var(--foreground)'};
+}
+function resetStages(){
+  [out.st1,out.st2,out.st3].forEach(function(st){st.textContent='—';st.style.color='var(--muted-foreground)';});
+}
+function refresh(){
+  var C=compute();
+  render(C);renderDiagram(C);renderResult(C);resetStages();
+  out.tl.style.display='none';
+  out.conc.style.color='var(--muted-foreground)';
+  out.conc.textContent='选择故障位置后，点击「模拟故障」观察方向元件的判别过程。';
+}
+function updateStages(C,t){
+  var M='var(--muted-foreground)', O='var(--orange)', R='var(--red)', G='var(--green)';
+  if(t<0.02){resetStages();return;}
+  out.st1.textContent=C.curOk?'启动':'未启动';
+  out.st1.style.color=C.curOk?O:M;
+  out.st2.textContent=C.deadzone?'死区（拒动）':(C.dirOk?'动作':'不动作');
+  out.st2.style.color=C.dirOk?G:(C.deadzone?R:M);
+  if(t<TTRIP){out.st3.textContent='……';out.st3.style.color=M;}
+  else if(C.act){out.st3.textContent='跳闸出口';out.st3.style.color=R;}
+  else{out.st3.textContent='闭锁不出口';out.st3.style.color=M;}
+}
+function runSim(){
+  if(running)return;
+  running=true;ui.run.disabled=true;
+  var C=compute();
+  render(C);renderDiagram(C);renderResult(C);resetStages();
+  out.conc.style.color='var(--foreground)';out.conc.textContent='故障发生，方向元件判别中……';
+  out.tl.style.display='flex';
+  var total=TTRIP, playback=600;
+  function finish(){
+    updateStages(C,1);
+    var r=conclusion(C);
+    out.conc.textContent=r.t;out.conc.style.color=r.c;
+    running=false;ui.run.disabled=false;
+  }
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){
+    out.tlf.style.width='100%';out.tlt.textContent='t = '+total.toFixed(2)+' s';
+    finish();return;
+  }
+  var start=null;
+  function frame(ts){
+    if(start===null)start=ts;
+    var t=Math.min((ts-start)/playback*total,total);
+    out.tlf.style.width=Math.min(t/total,1)*100+'%';
+    out.tlt.textContent='t = '+t.toFixed(2)+' s';
+    updateStages(C,t);
+    if(t<total){requestAnimationFrame(frame);}else{finish();}
+  }
+  requestAnimationFrame(frame);
+}
+['sc','pk','alpha'].forEach(function(k){
+  ui[k].addEventListener('input',refresh);
+  ui[k].addEventListener('change',refresh);
+});
+var CASES={
+  fwd:{v:{sc:'fwd',pk:60,alpha:30},note:'观察要点：正向三相短路时 φ = 90° − φk = 30°，恰好落在最大灵敏角附近，方向元件动作，与门开放跳闸。思考：把 φk 调到 85°，灵敏度如何变化？'},
+  rev:{v:{sc:'rev',pk:60,alpha:30},note:'观察要点：反向故障电流反相 180°，φ 移出动作区，方向元件闭锁——这就是方向电流保护选择性配合的基础。思考：反向故障应由哪一侧保护切除？'},
+  near:{v:{sc:'near',pk:60,alpha:30},note:'观察要点：出口近区三相短路时 Ubc≈0，方向元件因电压死区拒动。思考：记忆电压为什么能消除死区？两相短路是否也有死区？'}
+};
+var caseEl=el('dir-case'), caseNote=el('dir-case-note');
+caseEl.addEventListener('change',function(){
+  var v=caseEl.value;
+  if(!v){caseNote.textContent='';return;}
+  var P=CASES[v];
+  ui.sc.value=P.v.sc; ui.pk.value=P.v.pk; ui.alpha.value=P.v.alpha;
+  caseNote.textContent=P.note;
+  refresh(); runSim();
+});
+ui.run.addEventListener('click',runSim);
+refresh();
+})();
+</script>
+
+</main>
+</body>
+</html>

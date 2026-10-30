@@ -1,0 +1,263 @@
+﻿<!doctype>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08243f">
+<title>自动重合闸与加速配合 · 电力系统继电保护原理虚拟仿真</title>
+<style>
+:root{--background:#f2f6fa;--foreground:#172b3f;--card:#fff;--card-foreground:#172b3f;--muted:#edf3f7;--muted-foreground:#587086;--primary:#1268b3;--primary-foreground:#fff;--border:#d9e4ed;--red:#c43b35;--green:#168566;--orange:#d37916;--accent:#e8f3fa;--accent-foreground:#172b3f;--viz-series-1:#1268b3;--viz-series-2:#e18a23;--viz-series-3:#168566;--viz-series-4:#8555b5;--viz-series-5:#d44b45;--viz-series-6:#168a9e}
+*{box-sizing:border-box}
+body{margin:0;padding:0 16px 42px;background:var(--background);color:var(--foreground);font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.65}
+.lab-header{margin:0 -16px;background:linear-gradient(112deg,#071d35,#0a3556 65%,#0c526c);color:#fff;border-bottom:2px solid #20a9c4;box-shadow:0 4px 16px rgba(8,38,62,.14)}
+.lab-header-inner{max-width:1080px;margin:auto;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lab-brand{display:flex;align-items:center;gap:11px}.lab-mark{width:37px;height:37px;display:grid;place-items:center;border:1px solid rgba(105,216,235,.45);border-radius:8px;color:#70d8e9;background:rgba(40,181,205,.09)}
+.lab-brand b{display:block;font-size:15px;letter-spacing:.5px;font-weight:600}.lab-brand small{display:block;color:#92b6cb;font-size:9px;letter-spacing:1.6px;line-height:1.4}.lab-return{color:#d4e8f3;font-size:12px;text-decoration:none;border:1px solid rgba(180,215,230,.3);border-radius:6px;padding:5px 11px;white-space:nowrap;transition:.15s}.lab-return:hover{background:rgba(255,255,255,.1);border-color:#71d2e4}
+.lab-subhead{max-width:1080px;margin:18px auto 0;padding:0 4px;display:flex;align-items:center;gap:9px;color:#58738a;font-size:12px}.lab-subhead:before{content:"";width:18px;height:2px;background:#18a9c7}.lab-subhead span{color:#1268b3;letter-spacing:.6px}
+.wrap{max-width:1080px;margin:8px auto 0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:23px 28px 27px;box-shadow:0 7px 24px rgba(21,63,92,.06);position:relative;overflow:hidden}
+.wrap:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#1268b3,#18a9c7 45%,transparent 90%)}
+h3{margin:3px 0 14px;font-size:20px;font-weight:600;line-height:1.45}.wrap>h3{padding-bottom:12px;border-bottom:1px solid var(--border);color:#103c60}
+.text-small{font-size:12px}.text-muted{color:var(--muted-foreground)}.tabular-nums{font-variant-numeric:tabular-nums}.text-end{text-align:right}.text-nowrap{white-space:nowrap}
+.table{width:100%;border-collapse:collapse;margin:5px 0 9px}.table-sm td,.table-sm th{padding:6px 9px;border-bottom:1px solid var(--border);text-align:left}.table-sm th{background:#f1f6fa;color:#35566e;font-weight:500}.table-sm tr:last-child td{border-bottom:0}.table-sm th.text-end,.table-sm td.text-end{text-align:right}
+.form-range{width:100%;accent-color:var(--primary);cursor:pointer}.form-select{padding:6px 30px 6px 10px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);font-family:inherit;font-size:14px;outline:none}.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,104,179,.12)}
+.form-check{display:inline-flex;align-items:center;gap:5px;cursor:pointer}.form-check-input{accent-color:var(--primary);width:15px;height:15px;margin:0}
+.btn{padding:7px 17px;border:1px solid #bdcedb;border-radius:6px;background:#fff;color:var(--foreground);cursor:pointer;font-family:inherit;font-size:14px;transition:background .15s,border-color .15s,box-shadow .15s}.btn:hover{background:#edf5fa;border-color:#7ba9c5}.btn-primary{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary);box-shadow:0 2px 5px rgba(18,104,179,.16)}.btn-primary:hover{background:#0d599c;border-color:#0d599c}.btn:focus-visible{outline:3px solid rgba(24,169,199,.28);outline-offset:2px}.btn-primary:disabled{opacity:.55;cursor:default}
+input[type="number"],input[type="text"]{border:1px solid #bdcedb;border-radius:5px;padding:5px 8px;color:var(--foreground);font-family:inherit}input[type="number"]:focus,input[type="text"]:focus{outline:2px solid rgba(18,104,179,.15);border-color:var(--primary)}
+@media(max-width:640px){body{padding:0 8px 26px}.lab-header{margin:0 -8px}.lab-header-inner{padding:12px 14px}.lab-brand b{font-size:13px}.lab-brand small{font-size:8px;letter-spacing:1px}.lab-mark{width:32px;height:32px}.lab-return{padding:4px 8px}.wrap{padding:19px 15px 22px}.wrap>h3{font-size:18px}.lab-subhead{padding:0 7px}.table-sm td,.table-sm th{padding:5px}}
+</style>
+</head>
+<body>
+<header class="lab-header"><div class="lab-header-inner">
+  <div class="lab-brand"><span class="lab-mark"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13.2 2 5.8 13h5.6L10.8 22l7.4-11h-5.6L13.2 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><span><b>电力系统继电保护原理 · 虚拟仿真实验</b><small>RELAY PROTECTION VIRTUAL LAB</small></span></div>
+  <a class="lab-return" href="index.html">← 返回实验目录</a>
+</div></header>
+<div class="lab-subhead"><span>模块 06 · 自动重合闸</span> / 交互实验台</div>
+<main class="wrap"><div id="aar-sim">
+<style>
+#aar-sim .aar-controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin:6px 0 12px}
+#aar-sim .aar-field{display:flex;flex-direction:column;gap:4px;flex:1 1 170px;min-width:160px}
+#aar-sim .aar-field>span{font-weight:500}
+#aar-sim .aar-plabel{font-weight:500;margin:4px 0 6px}
+#aar-sim .aar-conc{margin-top:10px;font-weight:500}
+#aar-sim .aar-metrics{margin-top:8px;display:flex;flex-direction:column;gap:2px}
+#aar-sim .aar-params{background:var(--muted);border-radius:8px;padding:8px 12px;margin:6px 0 12px}
+#aar-sim svg{display:block;width:100%;height:auto}
+</style>
+
+<h3>自动重合闸（AAR）· 前加速 / 后加速保护配合</h3>
+
+<div class="aar-params text-small"><b>给定参数（供分析）：</b>三相一次自动重合闸，重合闸延时 tAAR = 1.0 s（自跳闸时刻起算）；保护Ⅱ段选择性延时 tⅡ = 0.5 s，瞬时（加速）跳闸 ≈ 0.1 s。<b>前加速</b>：第一次故障瞬时（无选择性）跳闸，重合后若故障仍在则按选择性延时跳闸；<b>后加速</b>：第一次按选择性延时跳闸，重合后若故障仍在则瞬时加速跳闸。永久性故障第二次跳闸后闭锁，不再重合。</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 10px">
+  <span style="font-weight:500">典型案例：</span>
+  <select class="form-select" id="aar-case">
+    <option value="">手动探索（自行调节参数）</option>
+    <option value="preT">案例1：前加速 + 瞬时性故障（快速恢复）</option>
+    <option value="preP">案例2：前加速 + 永久性故障（二次延时跳闸）</option>
+    <option value="postT">案例3：后加速 + 瞬时性故障</option>
+    <option value="postP">案例4：后加速 + 永久性故障（加速跳闸闭锁）</option>
+  </select>
+  <span class="text-small" id="aar-case-note" style="flex:1 1 260px"></span>
+</div>
+
+<div class="aar-controls">
+  <label class="aar-field"><span>故障性质</span>
+    <select class="form-select" id="aar-ft">
+      <option value="temp" selected>瞬时性故障（如雷击闪络）</option>
+      <option value="perm">永久性故障（如倒杆断线）</option>
+    </select></label>
+  <label class="aar-field"><span>配合方式</span>
+    <select class="form-select" id="aar-md">
+      <option value="pre" selected>前加速（加速第一次跳闸）</option>
+      <option value="post">后加速（加速第二次跳闸）</option>
+    </select></label>
+  <button type="button" class="btn btn-primary" id="aar-run">模拟故障</button>
+</div>
+
+<div class="aar-plabel">一次接线示意（断路器状态随时序联动）</div>
+<div id="aar-diagram" role="img" aria-label="重合闸线路接线示意图"></div>
+<div class="aar-plabel">动作时序图</div>
+<div id="aar-chart" role="img" aria-label="故障、断路器与保护动作时序图"></div>
+<div class="aar-metrics text-small" id="aar-metrics"></div>
+<div class="aar-conc" id="aar-conc" aria-live="polite">选择故障性质与配合方式后，点击「模拟故障」播放完整时序。</div>
+</div>
+<script>
+(function(){
+function el(id){return document.getElementById(id);}
+var ui={ft:el('aar-ft'),md:el('aar-md'),run:el('aar-run')};
+var out={chart:el('aar-chart'),metrics:el('aar-metrics'),conc:el('aar-conc'),diagram:el('aar-diagram')};
+var running=false;
+var TMAX=3.0;
+
+function scenario(ft,md){
+  if(md==='pre'&&ft==='temp')return{
+    fault:[[0,0.1]], qf:[[0,0.1,1],[0.1,1.1,0],[1.1,TMAX,1]],
+    events:[{t:0,label:'故障发生',c:'var(--red)'},{t:0.1,label:'前加速瞬时跳闸 0.1 s',c:'var(--red)'},{t:1.1,label:'重合闸合闸（t = 1.1 s）',c:'var(--green)'}],
+    first:'0.1 s（瞬时）',second:'—',result:'重合成功，恢复供电',total:'1.1 s'};
+  if(md==='pre'&&ft==='perm')return{
+    fault:[[0,1.6]], qf:[[0,0.1,1],[0.1,1.1,0],[1.1,1.6,1],[1.6,TMAX,0]],
+    events:[{t:0,label:'故障发生',c:'var(--red)'},{t:0.1,label:'前加速瞬时跳闸 0.1 s',c:'var(--red)'},{t:1.1,label:'重合于永久性故障',c:'var(--orange)'},{t:1.6,label:'按选择性延时跳闸 1.6 s，闭锁',c:'var(--red)'}],
+    first:'0.1 s（瞬时，无选择性）',second:'1.6 s（0.5 s 延时）',result:'重合失败，闭锁不再重合',total:'—'};
+  if(md==='post'&&ft==='temp')return{
+    fault:[[0,0.5]], qf:[[0,0.5,1],[0.5,1.5,0],[1.5,TMAX,1]],
+    events:[{t:0,label:'故障发生',c:'var(--red)'},{t:0.5,label:'选择性延时跳闸 0.5 s',c:'var(--red)'},{t:1.5,label:'重合闸合闸（t = 1.5 s）',c:'var(--green)'}],
+    first:'0.5 s（选择性延时）',second:'—',result:'重合成功，恢复供电',total:'1.5 s'};
+  return{
+    fault:[[0,1.6]], qf:[[0,0.5,1],[0.5,1.5,0],[1.5,1.6,1],[1.6,TMAX,0]],
+    events:[{t:0,label:'故障发生',c:'var(--red)'},{t:0.5,label:'选择性延时跳闸 0.5 s',c:'var(--red)'},{t:1.5,label:'重合于永久性故障',c:'var(--orange)'},{t:1.6,label:'后加速瞬时跳闸 1.6 s，闭锁',c:'var(--red)'}],
+    first:'0.5 s（选择性延时）',second:'1.6 s（重合后再经 0.1 s）',result:'重合失败，闭锁不再重合',total:'—'};
+}
+
+function renderDiagram(sc,cursor){
+  var closed=true;
+  if(cursor!==null){
+    sc.qf.forEach(function(seg){ if(cursor>=seg[0]&&cursor<seg[1])closed=seg[2]===1; });
+  }
+  var y=64, perm=ui.ft.value==='perm';
+  var showFault=perm||cursor===null;
+  if(!perm&&cursor!==null)sc.fault.forEach(function(f){if(cursor>=f[0]&&cursor<f[1])showFault=true;});
+  var col=closed?'var(--foreground)':'var(--red)';
+  var blade=closed?'M130,'+y+' L150,'+y:'M130,'+y+' L146,48';
+  var s='<svg viewBox="0 0 680 130" role="img" aria-label="重合闸线路接线图">';
+  s+='<circle cx="30" cy="'+y+'" r="14" fill="none" stroke="var(--foreground)" stroke-width="1.5"/>';
+  s+='<text x="30" y="'+(y+4)+'" text-anchor="middle" font-size="13" fill="var(--foreground)">~</text>';
+  s+='<text x="30" y="112" text-anchor="middle" font-size="12" fill="var(--foreground)">系统</text>';
+  s+='<line x1="44" y1="'+y+'" x2="100" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<line x1="100" y1="46" x2="100" y2="82" stroke="var(--foreground)" stroke-width="4"/>';
+  s+='<text x="100" y="38" text-anchor="middle" font-size="12" fill="var(--foreground)">母线A</text>';
+  s+='<line x1="100" y1="'+y+'" x2="130" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<rect x="130" y="'+(y-10)+'" width="20" height="20" fill="none" stroke="'+col+'" stroke-width="1.5"/>';
+  s+='<path d="'+blade+'" stroke="'+col+'" stroke-width="2.5" fill="none"/>';
+  s+='<text x="140" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">QF·保护+AAR</text>';
+  s+='<text x="140" y="122" text-anchor="middle" font-size="11" fill="'+col+'">'+(closed?'合闸':'分闸')+'</text>';
+  s+='<line x1="150" y1="'+y+'" x2="430" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<text x="290" y="104" text-anchor="middle" font-size="11" fill="var(--muted-foreground)">线路 L</text>';
+  s+='<line x1="430" y1="46" x2="430" y2="82" stroke="var(--foreground)" stroke-width="4"/>';
+  s+='<text x="430" y="38" text-anchor="middle" font-size="12" fill="var(--foreground)">母线B</text>';
+  s+='<line x1="430" y1="'+y+'" x2="520" y2="'+y+'" stroke="var(--foreground)" stroke-width="2"/>';
+  s+='<polygon points="530,'+y+' 518,'+(y-5)+' 518,'+(y+5)+'" fill="var(--foreground)"/>';
+  s+='<text x="552" y="104" text-anchor="middle" font-size="12" fill="var(--foreground)">负荷</text>';
+  if(perm){
+    s+='<line x1="284" y1="'+(y-7)+'" x2="296" y2="'+(y+7)+'" stroke="var(--red)" stroke-width="2.5"/>';
+    s+='<line x1="284" y1="'+(y+7)+'" x2="296" y2="'+(y-7)+'" stroke="var(--red)" stroke-width="2.5"/>';
+    s+='<text x="290" y="22" text-anchor="middle" font-size="12" fill="var(--red)">k（永久性故障）</text>';
+  }else if(showFault){
+    s+='<polygon points="292,'+(y-24)+' 284,'+(y-6)+' 291,'+(y-6)+' 286,'+(y+10)+' 302,'+(y-10)+' 294,'+(y-10)+' 300,'+(y-24)+'" fill="var(--orange)"/>';
+    s+='<text x="290" y="22" text-anchor="middle" font-size="12" fill="var(--orange)">k（瞬时性故障，如雷击）</text>';
+  }
+  s+='</svg>';
+  out.diagram.innerHTML=s;
+}
+
+function render(sc,cursor){
+  renderDiagram(sc,cursor);
+  var W=680,H=250,ml=96,mr=14,mt=26,mb=34;
+  function px(t){return ml+t/TMAX*(W-ml-mr);}
+  var yFault=44, yQfHi=96, yQfLo=126, yEvt=182;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="动作时序图">';
+  var i;
+  for(i=0;i<=6;i++){
+    var t=i*0.5;
+    s+='<line x1="'+px(t)+'" y1="'+mt+'" x2="'+px(t)+'" y2="'+(H-mb)+'" stroke="var(--border)" stroke-width="1"/>';
+    s+='<text x="'+px(t)+'" y="'+(H-mb+16)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">'+t.toFixed(1)+'</text>';
+  }
+  s+='<text x="'+((ml+W-mr)/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="12" fill="var(--muted-foreground)">时间 (s)</text>';
+  s+='<text x="'+(ml-8)+'" y="'+(yFault+5)+'" text-anchor="end" font-size="12" fill="var(--foreground)">故障存在</text>';
+  s+='<text x="'+(ml-8)+'" y="'+((yQfHi+yQfLo)/2+4)+'" text-anchor="end" font-size="12" fill="var(--foreground)">断路器 QF</text>';
+  s+='<text x="'+(ml-8)+'" y="'+(yEvt+4)+'" text-anchor="end" font-size="12" fill="var(--foreground)">动作事件</text>';
+  sc.fault.forEach(function(f){
+    s+='<rect x="'+px(f[0])+'" y="'+(yFault-9)+'" width="'+(px(f[1])-px(f[0]))+'" height="18" fill="var(--red)" fill-opacity="0.25"/>';
+  });
+  s+='<line x1="'+ml+'" y1="'+yFault+'" x2="'+(W-mr)+'" y2="'+yFault+'" stroke="var(--border)" stroke-width="1"/>';
+  var d='';
+  sc.qf.forEach(function(seg,i){
+    var y=seg[2]?yQfHi:yQfLo;
+    if(i===0){d='M'+px(seg[0])+','+y;}else{d+='L'+px(seg[0])+','+y;}
+    d+='L'+px(seg[1])+','+y;
+  });
+  s+='<path d="'+d+'" fill="none" stroke="var(--viz-series-1)" stroke-width="2.5"/>';
+  s+='<text x="'+(W-mr)+'" y="'+(yQfHi-6)+'" text-anchor="end" font-size="11" fill="var(--muted-foreground)">合</text>';
+  s+='<text x="'+(W-mr)+'" y="'+(yQfLo+14)+'" text-anchor="end" font-size="11" fill="var(--muted-foreground)">分</text>';
+  s+='<line x1="'+ml+'" y1="'+yEvt+'" x2="'+(W-mr)+'" y2="'+yEvt+'" stroke="var(--border)" stroke-width="1"/>';
+  sc.events.forEach(function(ev,i){
+    var show=cursor===null||ev.t<=cursor;
+    if(!show)return;
+    var up=i%2===0;
+    var ly=up?(yEvt-46):(yEvt+24);
+    s+='<line x1="'+px(ev.t)+'" y1="'+yEvt+'" x2="'+px(ev.t)+'" y2="'+(up?(yEvt-10):(yEvt+10))+'" stroke="'+ev.c+'" stroke-width="2"/>';
+    s+='<circle cx="'+px(ev.t)+'" cy="'+yEvt+'" r="3.5" fill="'+ev.c+'"/>';
+    var anch=px(ev.t)>W-mr-90?'end':(px(ev.t)<ml+70?'start':'middle');
+    var tx=anch==='end'?px(ev.t)-4:(anch==='start'?px(ev.t)+4:px(ev.t));
+    s+='<text x="'+tx+'" y="'+ly+'" text-anchor="'+anch+'" font-size="12" fill="'+ev.c+'">'+ev.label+'</text>';
+  });
+  if(cursor!==null){
+    s+='<line x1="'+px(cursor)+'" y1="'+mt+'" x2="'+px(cursor)+'" y2="'+(H-mb)+'" stroke="var(--foreground)" stroke-opacity="0.5" stroke-width="1.5"/>';
+  }
+  s+='</svg>';
+  out.chart.innerHTML=s;
+}
+
+function analysis(sc,ft,md){
+  out.metrics.innerHTML='<div>第一次故障切除时间：<b>'+sc.first+'</b>'+(sc.second==='—'?'':'；第二次故障切除时刻（自初次故障起）：<b>'+sc.second+'</b>')+'</div>'+
+    '<div>重合结果：<b>'+sc.result+'</b>'+(sc.total==='—'?'':'；恢复正常供电用时 ≈ '+sc.total)+'</div>';
+  var t;
+  if(md==='pre'&&ft==='temp')t='前加速 + 瞬时性故障：第一次跳闸无延时，全线快速切除，重合成功——前加速的优点是快速，代价是第一次跳闸无选择性（可能越级、扩大瞬时停电范围）。';
+  else if(md==='pre')t='前加速 + 永久性故障：第一次仍瞬时跳闸，但重合后需按选择性 0.5 s 延时再次跳闸——永久性故障切除变慢，且重合于故障对设备冲击大，这是前加速的缺点。';
+  else if(ft==='temp')t='后加速 + 瞬时性故障：第一次按选择性 0.5 s 延时跳闸，保证了选择性，但瞬时性故障切除较慢、重合成功也相应推迟。';
+  else t='后加速 + 永久性故障：第一次按选择性跳闸，重合后故障仍在则瞬时加速跳闸并闭锁——既有选择性，又能快速切除永久性故障，是 35 kV 以上线路常用方式。';
+  out.conc.style.color='var(--foreground)';
+  out.conc.textContent=t;
+}
+function refresh(){
+  var sc=scenario(ui.ft.value,ui.md.value);
+  render(sc,null);
+  out.metrics.innerHTML='';
+  out.conc.style.color='var(--muted-foreground)';
+  out.conc.textContent='选择故障性质与配合方式后，点击「模拟故障」播放完整时序。';
+}
+function runSim(){
+  if(running)return;
+  running=true;ui.run.disabled=true;
+  var ft=ui.ft.value, md=ui.md.value;
+  var sc=scenario(ft,md);
+  out.metrics.innerHTML='';
+  out.conc.style.color='var(--foreground)';
+  out.conc.textContent='时序播放中……';
+  var dur=4200;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){render(sc,TMAX);analysis(sc,ft,md);running=false;ui.run.disabled=false;return;}
+  var start=null;
+  function frame(ts){
+    if(start===null)start=ts;
+    var cursor=Math.min((ts-start)/dur*TMAX,TMAX);
+    render(sc,cursor);
+    if(cursor<TMAX){requestAnimationFrame(frame);}
+    else{analysis(sc,ft,md);running=false;ui.run.disabled=false;}
+  }
+  requestAnimationFrame(frame);
+}
+ui.ft.addEventListener('change',refresh);
+ui.md.addEventListener('change',refresh);
+var CASES={
+  preT:{v:{ft:'temp',md:'pre'},note:'观察要点：第一次 0.1 s 瞬时跳闸，1.1 s 重合成功。前加速用“无选择性”换取全线快速切除。思考：哪些网络允许这样牺牲选择性？'},
+  preP:{v:{ft:'perm',md:'pre'},note:'观察要点：重合于永久性故障后，第二次只能按选择性 0.5 s 延时跳闸，切除反而变慢，且重合冲击一次设备。思考：为什么前加速不适合高电压等级主网？'},
+  postT:{v:{ft:'temp',md:'post'},note:'观察要点：第一次按选择性 0.5 s 跳闸，重合成功。与案例1对比：恢复供电慢了多少？选择性得到了什么保证？'},
+  postP:{v:{ft:'perm',md:'post'},note:'观察要点：重合后故障仍在，后加速经约 0.1 s 跳闸并闭锁。对比案例2：第二次故障持续时间由 0.5 s 缩短到 0.1 s。思考：为什么后加速应用更广？'}
+};
+var caseEl=el('aar-case'), caseNote=el('aar-case-note');
+caseEl.addEventListener('change',function(){
+  var v=caseEl.value;
+  if(!v){caseNote.textContent='';return;}
+  var P=CASES[v];
+  ui.ft.value=P.v.ft; ui.md.value=P.v.md;
+  caseNote.textContent=P.note;
+  refresh(); runSim();
+});
+ui.run.addEventListener('click',runSim);
+refresh();
+})();
+</script>
+
+</main>
+</body>
+</html>
